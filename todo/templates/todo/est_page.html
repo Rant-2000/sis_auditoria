@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+<h1>{% block title %}Actividades{% endblock %}</h1>
+{% if g.user %}
+<a href="{{ url_for('todo.create')}}" class="action">Nuevo</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<ul>
+	{% for todo in todos %}
+	<li class="todo">
+	<div>
+		
+		<div class="about">
+			<h1>{{todo['titulo']}}</h1>
+			<p>{{todo['descripcion']}}</p>
+		</div>
+		<a class="action" href="#">Subir Entrega</a>
+		
+	</div>
+	</li>
+	{% if not loop.last %}
+	<hr>
+	{% endif %}
+	{% endfor %}
+	
+
+</ul>
+
+{% endblock %}

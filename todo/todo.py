@@ -8,7 +8,6 @@ from todo.db import get_db
 bp=Blueprint('todo',__name__)
 
 @bp.route('/')
-
 @login_required
 def index():
 	db,c=get_db()
@@ -16,6 +15,15 @@ def index():
 		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
 	todos=c.fetchall()
 	return render_template('todo/index.html',todos=todos)
+
+@bp.route('/estudent',methods=['GET','POST'])
+@login_required
+def est_page():
+	db,c=get_db()
+	c.execute(
+		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
+	todos=c.fetchall()
+	return render_template('todo/est_page.html',todos=todos)
 
 @bp.route('/create',methods=['GET','POST'])
 @login_required
