@@ -22,8 +22,8 @@ def est_page():
 	db,c=get_db()
 	c.execute(
 		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
-	todos=c.fetchall()
-	return render_template('todo/est_page.html',todos=todos)
+	activity=c.fetchall()
+	return render_template('todo/est_page.html',activity=activity)
 
 @bp.route('/create',methods=['GET','POST'])
 @login_required

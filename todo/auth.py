@@ -86,14 +86,12 @@ def login():
 			usu=user['username']
 			rol=c.fetchone()
 			tipo_user=rol["get_rolid('"+usu+"')"]
-			print(tipo_user)
+			
 			if tipo_user==1:
-				flash('Es admin')
+				return redirect(url_for('todo.index'))
 			elif tipo_user==2:
-				flash('Es tutor')
 				return redirect(url_for('todo.index'))
 			elif tipo_user==3:
-				print('Estudiante')
 				return redirect(url_for('todo.est_page'))
 
 
