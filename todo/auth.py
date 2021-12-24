@@ -82,6 +82,18 @@ def login():
 		if error is None:
 			session.clear()
 			session['user_id']=user['user_id']
+			c.execute('SELECT get_rolid(%s)',(user['user_id'],))
+			rol=c.fetchone()
+			if rol==1:
+				print('Es admin')
+
+			else if rol==2:
+				print('Es tutor')
+
+			else if rol==3
+				print('Es estudiante')
+
+
 			return redirect(url_for('todo.index'))
 
 		flash(error)
