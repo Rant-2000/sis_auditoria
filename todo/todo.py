@@ -4,6 +4,8 @@ from flask import (
 from werkzeug.exceptions import abort
 from todo.auth import login_required
 from todo.db import get_db
+from werkzeug.utils import secure_filename
+import os
 
 bp=Blueprint('todo',__name__)
 
@@ -21,10 +23,28 @@ def index():
 def est_page():
 	db,c=get_db()
 	c.execute(
-		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
+		"SELECT a.descripcion 'descripcion',p.prof_nombre 'tiular',a.titulo 'titulo', g.gru_clave 'Clave',e.es_nom 'nom',e.es_apellidos 'app' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo  inner join grupo g on e.fkgrupo=g.gru_id inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/est_page.html',activity=activity)
-
+@bp.route('/up',methods=['POST'])
+@login_required
+def uploader():
+	if request.method == 'POST':
+		grupo=request.form['codeg']
+		esname=request.form['esname']
+		eslast=request.form['eslast']
+		title=request.form['title']
+		fullname=esname+"_"+eslast
+		print('FULL: ',fullname)
+		crea_dir(2021,grupo,fullname,title)
+	  # obtenemos el archivo del input "archivo"
+		f = request.files['archivo']
+		filename = secure_filename(f.filename)
+	  # Guardamos el archivo en el directorio "Archivos PDF"
+		ruta='C:\\Users\\Admin\\Documents\\pyt\\tutoria\\todo\\Archivos_PDF\\2021\\INF1A\\Reyson_Antonio'
+		f.save(os.path.join(ruta, filename))
+	  # Retornamos una respuesta satisfactoria
+		return redirect(url_for('todo.est_page'))
 @bp.route('/tutor',methods=['GET','POST'])
 @login_required
 def prof_page():
@@ -113,3 +133,38 @@ def delete(id):
 
 	#return render_template('todo/create.html',todo=todo)
 	return ''
+
+def crea_dir(anho,gru,nom,act):
+	#directorio = "Archivos_PDF\\"+anho
+	try:
+	    #os.mkdir(directorio)
+	    os.mkdir.join(directorio,anho)
+	except OSError:
+	    print("La creación del directorio %s falló" % directorio)
+	else:
+	    print("Se ha creado el directorio: %s " % directorio)
+
+	directorio = "Archivos_PDF\\"+anho+"\\"+gru
+	try:
+	    os.mkdir(directorio)
+	except OSError:
+	    print("La creación del directorio %s falló" % directorio)
+	else:
+	    print("Se ha creado el directorio: %s " % directorio)
+
+	directorio = "Archivos_PDF\\"+anho+"\\"+gru+"\\"+nom
+	try:
+	    os.mkdir(directorio)
+	except OSError:
+	    print("La creación del directorio %s falló" % directorio)
+	else:
+	    print("Se ha creado el directorio: %s " % directorio)
+
+	directorio = "Archivos_PDF\\"+anho+"\\"+gru+"\\"+nom+"\\"+act
+	try:
+	    os.mkdir(directorio)
+	except OSError:
+	    print("La creación del directorio %s falló" % directorio)
+	else:
+	    print("Se ha creado el directorio: %s " % directorio)
+	

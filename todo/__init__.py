@@ -12,8 +12,12 @@ def create_app():
 			DATABASE_PASSWORD=os.environ.get("FLASK_DATABASE_PASSWORD"),
 			DATABASE_USER=os.environ.get("FLASK_DATABASE_USER"),
 			DATABASE=os.environ.get("FLASK_DATABASE")
+		#	UPLOAD_FOLDER=os.environ.get("UPLOAD_FOLDER")
 		#	PUERTO=os.environ.get("FLASK_RUN_PORT")			
 	)
+	#app.config['UPLOAD_FOLDER'] = './Archivos PDF'
+
+
 	from . import db
 	db.init_app(app)
 
@@ -25,3 +29,4 @@ def create_app():
 	def hola():
 		return "Chacho felizx"
 	return app
+
