@@ -90,7 +90,7 @@ def login():
 			if tipo_user==1:
 				return redirect(url_for('todo.index'))
 			elif tipo_user==2:
-				return redirect(url_for('todo.index'))
+				return redirect(url_for('todo.prof_page'))
 			elif tipo_user==3:
 				return redirect(url_for('todo.est_page'))
 

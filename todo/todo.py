@@ -16,7 +16,7 @@ def index():
 	todos=c.fetchall()
 	return render_template('todo/index.html',todos=todos)
 
-@bp.route('/estudent',methods=['GET','POST'])
+@bp.route('/pupilo',methods=['GET','POST'])
 @login_required
 def est_page():
 	db,c=get_db()
@@ -24,6 +24,15 @@ def est_page():
 		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/est_page.html',activity=activity)
+
+@bp.route('/tutor',methods=['GET','POST'])
+@login_required
+def prof_page():
+	db,c=get_db()
+	print('Usuario: '+g.user['username'])
+	c.execute("SELECT g.gru_clave 'Grupo',c.codigo 'Carrera',g.gru_id 'gc' from grupo g inner join carrera c on g.fk_carrera=c.car_id  inner join profesor p on g.fk_tutor=p.prof_id inner join user u on u.user_id=p.fkuser where u.username=%s;",(g.user['username'],))
+	activity=c.fetchall()
+	return render_template('todo/prof_page.html',activity=activity)
 
 @bp.route('/create',methods=['GET','POST'])
 @login_required
@@ -41,7 +50,24 @@ def create():
 			db.commit()
 			return redirect(url_for('todo.index'))
 
-	return render_template('todo/create.html')
+@bp.route('/<int:gc>/new_act',methods=['GET','POST'])
+@login_required
+def nueva_actividad(gc):
+	return render_template('todo/new_actividad.html',gc=gc)
+
+@bp.route('/added',methods=['POST'])
+@login_required
+def actividad_novo():
+	if request.method=='POST':
+		grupo=request.form['group']
+		title=request.form['title']
+		content=request.form['content']
+		titular=g.user['username']
+		
+
+	return render_template('todo/new_actividad.html',gc=gc)
+	
+
 def get_todo(id):
 	db, c=get_db()
 	c.execute('SELECT t.id,t.description,t.completed,t.created_by,t.created_at,u.username from todo t join user u on t.created_by=u.id where t.id=%s',(id,))

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+<h1>{% block title %}Grupos {% endblock %}</h1>
+
+{% endblock %}
+
+{% block content %}
+<ul>
+	{% for actividad in activity %}
+	<li class="todo">
+	<div>
+		<p> </p>
+		<form method="POST" action="{{ url_for('todo.nueva_actividad',gc=actividad['gc']) }}">
+			<div class="about">
+			<h1>Grupo: {{actividad['Grupo']}}</h1>
+			<h2>Carrera: {{actividad['Carrera']}}</h2>
+			
+		</div>
+		<a class="action" href="">Agregar Actividad</a>
+		</form>
+		
+		
+	</div>
+	</li>
+	{% if not loop.last %}
+	<hr>
+	{% endif %}
+	{% endfor %}
+	
+
+</ul>
+
+{% endblock %}
