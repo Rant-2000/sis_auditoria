@@ -18,7 +18,7 @@
 			<h2>Carrera: {{actividad['Carrera']}}</h2>
 			
 		</div>
-		<a class="action" href="">Agregar Actividad</a>
+		<a class="action" href="{{ url_for('todo.nueva_actividad',gc=actividad['gc']) }}">Agregar Actividad</a>
 		</form>
 		
 		

@@ -4,14 +4,16 @@
 {% endblock %}
 
 {% block content %}
-	<form method="POST" action="{{ url_for('todo.actividad_novo'}} ">
-		<label name="group" id="group">{{gc}}</label>
+	<form method="POST" action="{{ url_for('todo.actividad_novo')}} ">
+		
+
 		<label for='title'>Titulo:</label>
 		<input  name="title" id="title" required>
 
 		<label for='content'>Conenido</label>
 		<input  name="content" id="content" required>
 
+		<input  name="group" id="group" required value="{{gc}}">
 		
 
 		<input  type="submit" value="Subir actividad">

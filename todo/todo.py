@@ -29,7 +29,7 @@ def est_page():
 @login_required
 def prof_page():
 	db,c=get_db()
-	print('Usuario: '+g.user['username'])
+	
 	c.execute("SELECT g.gru_clave 'Grupo',c.codigo 'Carrera',g.gru_id 'gc' from grupo g inner join carrera c on g.fk_carrera=c.car_id  inner join profesor p on g.fk_tutor=p.prof_id inner join user u on u.user_id=p.fkuser where u.username=%s;",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/prof_page.html',activity=activity)
@@ -59,13 +59,20 @@ def nueva_actividad(gc):
 @login_required
 def actividad_novo():
 	if request.method=='POST':
+		#intentar declarar el grupo de otra manera
 		grupo=request.form['group']
 		title=request.form['title']
 		content=request.form['content']
-		titular=g.user['username']
-		
 
-	return render_template('todo/new_actividad.html',gc=gc)
+		
+		db, c=get_db()
+		c.execute('SELECT prof_id from profesor where fkuser=%s',(g.user['user_id'],))
+		prof=c.fetchone()
+		c.execute('insert into actividad(titular,fk_grupo,titulo,descripcion) values(%s,%s,%s,%s)',(prof['prof_id'],grupo,title,content))
+		db.commit()
+		flash("Se ha agregado la actividad")
+		return redirect(url_for('todo.prof_page'))
+	
 	
 
 def get_todo(id):
