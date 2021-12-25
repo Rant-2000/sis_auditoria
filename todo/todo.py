@@ -6,6 +6,7 @@ from todo.auth import login_required
 from todo.db import get_db
 from werkzeug.utils import secure_filename
 import os
+from pathlib import Path,PurePath
 
 bp=Blueprint('todo',__name__)
 
@@ -36,13 +37,13 @@ def uploader():
 		title=request.form['title']
 		fullname=esname+"_"+eslast
 		print('FULL: ',fullname)
-		crea_dir(2021,grupo,fullname,title)
+		rutaf=crea_dir('2021',grupo,fullname,title)
 	  # obtenemos el archivo del input "archivo"
 		f = request.files['archivo']
 		filename = secure_filename(f.filename)
 	  # Guardamos el archivo en el directorio "Archivos PDF"
-		ruta='C:\\Users\\Admin\\Documents\\pyt\\tutoria\\todo\\Archivos_PDF\\2021\\INF1A\\Reyson_Antonio'
-		f.save(os.path.join(ruta, filename))
+		
+		f.save(os.path.join(rutaf, filename))
 	  # Retornamos una respuesta satisfactoria
 		return redirect(url_for('todo.est_page'))
 @bp.route('/tutor',methods=['GET','POST'])
@@ -135,36 +136,26 @@ def delete(id):
 	return ''
 
 def crea_dir(anho,gru,nom,act):
-	#directorio = "Archivos_PDF\\"+anho
-	try:
-	    #os.mkdir(directorio)
-	    os.mkdir.join(directorio,anho)
-	except OSError:
-	    print("La creación del directorio %s falló" % directorio)
-	else:
-	    print("Se ha creado el directorio: %s " % directorio)
+    directorio = PurePath(Path.cwd(),'Archivos_PDF')
+    print(directorio)
+    Path(directorio).mkdir(exist_ok=True)
+    
+    directorio=PurePath(directorio,anho)
+    print(directorio)
+    Path(directorio).mkdir(exist_ok=True)
 
-	directorio = "Archivos_PDF\\"+anho+"\\"+gru
-	try:
-	    os.mkdir(directorio)
-	except OSError:
-	    print("La creación del directorio %s falló" % directorio)
-	else:
-	    print("Se ha creado el directorio: %s " % directorio)
+    directorio=PurePath(directorio,gru)
+    print(directorio)
+    Path(directorio).mkdir(exist_ok=True)
 
-	directorio = "Archivos_PDF\\"+anho+"\\"+gru+"\\"+nom
-	try:
-	    os.mkdir(directorio)
-	except OSError:
-	    print("La creación del directorio %s falló" % directorio)
-	else:
-	    print("Se ha creado el directorio: %s " % directorio)
+    directorio=PurePath(directorio,nom)
+    print(directorio)
+    Path(directorio).mkdir(exist_ok=True)
 
-	directorio = "Archivos_PDF\\"+anho+"\\"+gru+"\\"+nom+"\\"+act
-	try:
-	    os.mkdir(directorio)
-	except OSError:
-	    print("La creación del directorio %s falló" % directorio)
-	else:
-	    print("Se ha creado el directorio: %s " % directorio)
+    directorio=PurePath(directorio,act)
+    print(directorio)
+    Path(directorio).mkdir(exist_ok=True)
+
+    return directorio
+
 	
