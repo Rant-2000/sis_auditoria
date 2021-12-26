@@ -24,7 +24,7 @@ def index():
 def est_page():
 	db,c=get_db()
 	c.execute(
-		"SELECT a.descripcion 'descripcion',p.prof_nombre 'tiular',a.titulo 'titulo', g.gru_clave 'Clave',e.es_nom 'nom',e.es_apellidos 'app' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo  inner join grupo g on e.fkgrupo=g.gru_id inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
+		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo', g.gru_clave 'Clave',e.es_nom 'nom',e.es_apellidos 'app' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo  inner join grupo g on e.fkgrupo=g.gru_id inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/est_page.html',activity=activity)
 @bp.route('/up',methods=['POST'])
@@ -36,15 +36,24 @@ def uploader():
 		eslast=request.form['eslast']
 		title=request.form['title']
 		fullname=esname+"_"+eslast
+		comment=request.form['comment']
 		print('FULL: ',fullname)
 		rutaf=crea_dir('2021',grupo,fullname,title)
-	  # obtenemos el archivo del input "archivo"
+		db,c=get_db()
+		print('ID USUARIO ',g.user['user_id'])
+		print('RUTA: ',rutaf)
+		print('Comentario ',comment)
+		print('Titulo: ',title)
+		rutastr=str(rutaf)
+		c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['user_id'],rutastr,comment,title))
+		#`alta_es_ac`(userid int,ruta mediumtext,estcomm mediumtext,titulop varchar(30) )
+		db.commit()
+
 		f = request.files['archivo']
 		filename = secure_filename(f.filename)
-	  # Guardamos el archivo en el directorio "Archivos PDF"
-		
+	 
 		f.save(os.path.join(rutaf, filename))
-	  # Retornamos una respuesta satisfactoria
+	 
 		return redirect(url_for('todo.est_page'))
 @bp.route('/tutor',methods=['GET','POST'])
 @login_required

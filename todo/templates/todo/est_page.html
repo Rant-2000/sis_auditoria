@@ -17,6 +17,7 @@
 		<div class="about">
 			
 			<form action="{{ url_for('todo.uploader') }}" method="POST" enctype="multipart/form-data">
+			
 			<input type="text" name="title" id="title" value="{{actividad['titulo']}}">
 			<input type="text" name="codeg" id="codeg" value="{{actividad['Clave']}}">
 			<input type="text" name="esname" id="esname" value="{{actividad['nom']}}">
@@ -26,6 +27,7 @@
 			<p>{{actividad['descripcion']}}</p>
 		 	<input type="file" name="archivo">
 		 	<input type="submit">
+		 	<textarea id="comment" name="comment"></textarea>
 			</form>
 		</div>
 		
