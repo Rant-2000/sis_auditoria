@@ -46,18 +46,17 @@ def uploader():
 		print('Titulo: ',title)
 		c.execute("SELECT isEntregado(%s,%s) as 'estado'",(g.user['user_id'],title))
 		esEntregado=c.fetchone()
-		if esEntregado==0 or None:
-			rutastr=str(rutaf)
-			c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['user_id'],rutastr,comment,title))
-			#`alta_es_ac`(userid int,ruta mediumtext,estcomm mediumtext,titulop varchar(30) )
-			db.commit()
-
-			f = request.files['archivo']
-			filename = secure_filename(f.filename)
-		 
-			f.save(os.path.join(rutaf, filename))
-		else:
-			flash('Ya ha sido entregado anteriormente')
+		#if esEntregado==0:
+		rutastr=str(rutaf)
+		c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['user_id'],rutastr,comment,title))
+		#`alta_es_ac`(userid int,ruta mediumtext,estcomm mediumtext,titulop varchar(30) )
+		db.commit()
+		f = request.files['archivo']
+		filename = secure_filename(f.filename)
+		
+		f.save(os.path.join(rutaf, filename))
+		#else:
+		#	flash('Ya ha sido entregado anteriormente')
 
 		
 	 
@@ -100,12 +99,16 @@ def actividad_novo():
 		grupo=request.form['group']
 		title=request.form['title']
 		content=request.form['content']
-
+		v0=request.form['v0']
+		v1=request.form['v1']
+		v2=request.form['v2']
+		v3=request.form['v3']
+		v4=request.form['v4']
+		v5=request.form['v5']
 		
 		db, c=get_db()
-		c.execute('SELECT prof_id from profesor where fkuser=%s',(g.user['user_id'],))
-		prof=c.fetchone()
-		c.execute('insert into actividad(titular,fk_grupo,titulo,descripcion) values(%s,%s,%s,%s)',(prof['prof_id'],grupo,title,content))
+		
+		c.execute('CALL alta_actividad(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',(grupo,g.user['username'],title,content,v0,v1,v2,v3,v4,v5))
 		db.commit()
 		flash("Se ha agregado la actividad")
 		return redirect(url_for('todo.prof_page'))
