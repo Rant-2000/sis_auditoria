@@ -91,6 +91,17 @@ def create():
 def nueva_actividad(gc):
 	return render_template('todo/new_actividad.html',gc=gc)
 
+@bp.route('/<int:gc>/rev_act',methods=['GET'])
+@login_required
+def rev_actividad(gc):
+	#CALL get_Ac_grupo('rantoso',2);
+	db,c=get_db()
+	c.execute(
+		"CALL get_Ac_grupo(%s,%s);",(g.user['username'],gc))
+	activity=c.fetchall()
+	#return render_template('todo/est_page.html',activity=activity)
+	return render_template('todo/rev_actividades.html',gc=gc,activity=activity)
+
 @bp.route('/added',methods=['POST'])
 @login_required
 def actividad_novo():
