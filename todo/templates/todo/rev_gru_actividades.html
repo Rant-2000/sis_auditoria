@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block header %}
+	<h1>{% block title %}Revisar actividades{% endblock %}</h1>
+	<h2>Grupo {{gc}}</h2>
+{% endblock %}
+
+{% block content %}
+	
+		
+
+		{% for actividad in todo %}
+		<form method="POST" action="{{ url_for('todo.actividad_novo')}}" id="{{actividad['acid']}}">
+		<label for='title'>Estudiante:</label>
+		
+		<input  name="title" id="title" value="{{actividad['nom']}}">
+
+		<label for='content'>Estado</label>
+		<input  name="title" id="title" value="{{actividad['entrega']}}">
+		
+	
+		<input  type="submit" value="Revisar actividad">
+		</form>
+		{% if not loop.last %}
+	<hr>
+	{% endif %}
+	{% endfor %}
+	
+{% endblock %}

@@ -91,6 +91,14 @@ def create():
 def nueva_actividad(gc):
 	return render_template('todo/new_actividad.html',gc=gc)
 
+@bp.route('/<int:acid>/<int:gc>/revision_ac_gru',methods=['GET','POST'])
+@login_required
+def revi_gru(acid,gc):
+	db, c=get_db()
+	c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
+	todo=c.fetchall()
+	return render_template('todo/rev_gru_actividades.html',todo=todo)
+
 @bp.route('/<int:gc>/rev_act',methods=['GET'])
 @login_required
 def rev_actividad(gc):
