@@ -5,21 +5,22 @@
 {% endblock %}
 
 {% block content %}
-	<form method="POST" action="{{ url_for('todo.actividad_novo')}} ">
+	
 		
 
 		{% for actividad in activity %}
-<label for='title'>Titulo:</label>
+		<form method="POST" action="{{ url_for('todo.actividad_novo')}}" id="{{actividad['acid']}}">
+		<label for='title'>Titulo:</label>
 		<input  name="title" id="title" value="{{actividad['titulo']}}">
 
 		<label for='content'>Descripcion</label>
-		<input  name="content" id="content" value="{{actividad['des']}}">
-
-		<input  name="group" id="group" required value="{{gc}}">
+		<textarea name="content" id="content">{{actividad['des']}}</textarea>
+	
 		<input  type="submit" value="Revisar actividad">
+		</form>
 		{% if not loop.last %}
 	<hr>
 	{% endif %}
 	{% endfor %}
-	</form>
+	
 {% endblock %}
