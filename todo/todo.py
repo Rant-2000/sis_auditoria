@@ -97,7 +97,7 @@ def revi_gru(acid,gc):
 	db, c=get_db()
 	c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
 	todo=c.fetchall()
-	return render_template('todo/rev_gru_actividades.html',todo=todo)
+	return render_template('todo/rev_gru_actividades.html',todo=todo,gc=gc,acid=acid)
 
 @bp.route('/<int:gc>/rev_act',methods=['GET'])
 @login_required
@@ -132,7 +132,20 @@ def actividad_novo():
 		flash("Se ha agregado la actividad")
 		return redirect(url_for('todo.prof_page'))
 	
-	
+@bp.route('/rev_ind',methods=['POST'])
+@login_required
+def rev_ind():
+	if request.method=='POST':
+		#intentar declarar el grupo de otra manera
+		nc=request.form['nc']
+		acid=request.form['acid']
+		db, c=get_db()
+		
+		c.execute('CALL getAct_ind(%s,%s)',(acid,nc))
+		revision=c.fetchone()
+		#db.commit()
+		
+		return render_template('todo/vis_cal_actividad.html',revision=revision)
 
 def get_todo(id):
 	db, c=get_db()
