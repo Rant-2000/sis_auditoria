@@ -1,2 +1,9 @@
-.Archivos_PDF
-.venv
+venv/
+.env
+
+*.pyc
+__pycache__/
+
+instance
+
+Archivos_PDF/
