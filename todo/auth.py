@@ -64,6 +64,30 @@ def register_prof():
 			return redirect(url_for('auth.login'))
 		flash(error)
 	return render_template('auth/register_prof.html')
+@bp.route('/register_root',methods=['GET','POST'])
+def register_root():
+	if request.method=='POST':
+		
+		username=request.form['username']
+		password=request.form['password']
+		db, c= get_db()
+		error = None
+		c.execute('select user_id from user where username = %s',(username,))
+		if not username:
+			error='Username es requerido'
+		if not password:
+			error='Password es requerido'
+		elif c.fetchone() is not None:
+			error= 'Usuario {} se encuentra registrado'.format(username)
+
+		if error is None:
+			#c.execute('insert into user(username,password) values (%s,%s)',(username,generate_password_hash(password)))
+			c.execute('INSERT INTO user(username,password,fk_rol) values(%s,%s,%s)',(username,generate_password_hash(password),1))
+			
+			db.commit()
+			return redirect(url_for('auth.login'))
+		flash(error)
+	return render_template('auth/register_root.html')
 
 @bp.route('/login',methods=['GET','POST'])
 def login():
