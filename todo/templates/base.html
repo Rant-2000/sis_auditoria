@@ -1,20 +1,21 @@
 <!doctype html>
 <title>{% block title %}{% endblock %}TODO LIS</title>
-<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/style.css')}}">
 
 <nav>
 	<h1>Tutorias</h1>
 	<ul>
-		{% if g.user %}
+	{% if g.user %}
 		<li><span>{{g.user['username']}}</span></li>
 		<li><a href="{{url_for('auth.logout')}}">Cerrar Sesion</a></li>
 		{% else %}
-		<li><a href="{{url_for('auth.register')}}">Registrar Alumno</a></li>
+	<li><a href="{{url_for('auth.register')}}">Registrar Alumno</a></li>
 		<li><a href="{{url_for('auth.register_prof')}}">Registrar Profesor</a></li>
 		<li><a href="{{url_for('auth.register_root')}}">Registrar Root</a></li>
 		<li><a href="{{url_for('auth.login')}}">Iniciar Sesion</a></li>
 		{% endif %}
-	</ul>
+</ul>
+	
 
 </nav>
 <section class="content">

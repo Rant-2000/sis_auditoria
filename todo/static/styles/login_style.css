@@ -1,0 +1,122 @@
+body{
+margin: 0;
+padding: 0;
+background: url(../imagenes/fondo.jfif) no-repeat center top;
+background-size: cover;
+font-family: sans-serif;
+height: 100vh;
+}
+
+.login-box{
+	width: 320px;
+	height: 350px;
+	background-color: white;
+	color: black;
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	box-sizing: border-box;
+	padding: 70px 30px;
+
+}
+.reg-es-box{
+	width: 320px;
+	height: 500px;
+	background-color: white;
+	color: black;
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	box-sizing: border-box;
+	padding: 50px 30px;
+
+
+}
+
+.login-box .avatar{
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	position: absolute;
+	top: -50px;
+	left: calc(50% - 50px);
+}
+.login-box h1{
+	margin: 0;
+	padding: 0 0 20px;
+	text-align: center;
+	font-size: 22px;
+
+}
+.reg-es-box h1{
+	margin: 0;
+	padding: 0 0 20px;
+	text-align: center;
+	font-size: 22px;
+
+}
+.login-box label{
+	margin: 0;
+	padding: 0;
+	font-weight: bold;
+	display: block;
+}
+.login-box input{
+	width: 100%;
+	margin-bottom: 20px;
+}
+.login-box input[type="text"],
+.login-box input[type="password"]{
+	border: none;
+	border-bottom: 1px solid black;
+	background: transparent;
+	outline: none;
+	height: 40px;
+	color: black;
+	font-size: 16px;
+}
+
+.login-box input[type="submit"]{
+	border: none;
+	outline: none;
+	height: 40px;
+	background: lightskyblue;
+	color: black;
+	font-size: 18px;
+	border-radius: 20px;
+}
+
+
+
+.reg-es-box label{
+	margin: 0;
+	padding: 0;
+	font-weight: bold;
+	display: block;
+}
+.reg-es-box input{
+	width: 100%;
+	margin-bottom: 10px;
+}
+.reg-es-box input[type="text"],
+.reg-es-box input[type="password"]{
+	border: none;
+	border-bottom: 1px solid black;
+	background: transparent;
+	outline: none;
+	height: 20px;
+	color: black;
+	font-size: 16px;
+}
+
+.reg-es-box input[type="submit"]{
+	border: none;
+	outline: none;
+	height: 40px;
+	background: lightskyblue;
+	color: black;
+	font-size: 18px;
+	border-radius: 20px;
+}
