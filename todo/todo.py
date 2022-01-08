@@ -18,7 +18,10 @@ def index():
 		"SELECT a.descripcion 'descripcion',p.prof_nombre 'titular',a.titulo 'titulo' from actividad a inner join profesor p on a.titular=prof_id inner join estudiante e on e.fkgrupo=a.fk_grupo inner join user u on e.fkuser=u.user_id where u.username=%s",(g.user['username'],))
 	todos=c.fetchall()
 	return render_template('todo/index.html',todos=todos)
-
+@bp.route('/admin')
+@login_required
+def admin():
+	return render_template('todo/admin.html')
 @bp.route('/pupilo',methods=['GET','POST'])
 @login_required
 def est_page():

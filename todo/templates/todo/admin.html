@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+<h1>{% block title %}Control de Tutorias{% endblock %}</h1>
+{% if g.user %}
+<a href="{{ url_for('todo.create')}}" class="action">Nuevo</a>
+{% endif %}
+
+
+{% endblock %}
+
+{% block content %}
+<ul>
+    <li><a href="#">Estudiantes</a>
+    	<ul><a href="{{url_for('auth.register')}}">Agregar</a></ul>
+    	<ul><a href="">Buscar</a></ul>
+    	<ul><a href="">Editar</a></ul>
+    	<ul><a href="">Consultar</a></ul>
+    </li>
+    <li><a href="#">Profesorado</a>
+    	<ul><a href="{{url_for('auth.register_prof')}}">Agregar</a></ul>
+    	<ul><a href="">Buscar</a></ul>
+    	<ul><a href="">Editar</a></ul>
+    	<ul><a href="">Consultar</a></ul>
+    </li>
+    <li><a href="#">Grupos</a>
+    	<ul><a href="">Agregar</a></ul>
+    	<ul><a href="">Buscar</a></ul>
+    	<ul><a href="">Editar</a></ul>
+    	<ul><a href="">Consultar</a></ul>
+    </li>
+    <li><a href="#">Actividades</a>
+    	<ul><a href="">Agregar</a></ul>
+    	<ul><a href="">Buscar</a></ul>
+    	<ul><a href="">Editar</a></ul>
+    	<ul><a href="">Consultar</a></ul>
+    </li>
+    <li><a href="#">Carreras</a>
+    	<ul><a href="">Agregar</a></ul>
+    	<ul><a href="">Buscar</a></ul>
+    	<ul><a href="">Editar</a></ul>
+    	<ul><a href="">Consultar</a></ul>
+    </li>
+    <li><a href="#">Especialidades</a>
+    	<ul><a href="">Agregar</a></ul>
+    	<ul><a href="">Buscar</a></ul>
+    	<ul><a href="">Editar</a></ul>
+    	<ul><a href="">Consultar</a></ul>
+    </li>
+</ul>
+
+{% endblock %}

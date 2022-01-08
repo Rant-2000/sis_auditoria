@@ -33,7 +33,8 @@ def register():
 			c.execute('call altaEstudiante(%s,%s,%s,%s,%s,%s,%s,%s)',(nc,name,lastname,group,generacion,email,username,generate_password_hash(password)))
 			
 			db.commit()
-			return redirect(url_for('auth.login'))
+			#return redirect(url_for('auth.login'))
+			return redirect(url_for('todo.admin'))
 		flash(error)
 	return render_template('auth/register.html')
 @bp.route('/register_prof',methods=['GET','POST'])
@@ -112,7 +113,7 @@ def login():
 			tipo_user=rol["get_rolid('"+usu+"')"]
 			
 			if tipo_user==1:
-				return redirect(url_for('todo.index'))
+				return redirect(url_for('todo.admin'))
 			elif tipo_user==2:
 				return redirect(url_for('todo.prof_page'))
 			elif tipo_user==3:
