@@ -3,51 +3,118 @@
 {% block header %}
 
 <h1>{% block title %}Control de Tutorias{% endblock %}</h1>
-{% if g.user %}
-<a href="{{ url_for('todo.create')}}" class="action">Nuevo</a>
-{% endif %}
+<style type="text/css">
+            
+            * {
+                margin:0px;
+                padding:0px;
+            }
+            
+            #header {
+                margin:auto;
+                width:100%;
+                font-family:Arial, Helvetica, sans-serif;
+              
+            }
+            
+            ul, ol {
+                list-style:none;
+            }
+            
+            .nav > li {
+                float:left;
+            }
+            
+            .nav li a {
+                background-color:#000;
+                color:#fff;
+                text-decoration:none;
+                padding:10px 12px;
+                display:block;
+            }
+            
+            .nav li a:hover {
+                background-color:#434343;
+            }
+            
+            .nav li ul {
+                display:none;
+                position:absolute;
+                min-width:140px;
+            }
+            
+            .nav li:hover > ul {
+                display:block;
+            }
+            
+            .nav li ul li {
+                position:relative;
+            }
+            
+            .nav li ul li ul {
+                right:-140px;
+                top:0px;
+            }
+            
+        </style>
 
 
 {% endblock %}
 
 {% block content %}
-<ul>
-    <li><a href="#">Estudiantes</a>
-    	<ul><a href="{{url_for('auth.register')}}">Agregar</a></ul>
-    	<ul><a href="">Buscar</a></ul>
-    	<ul><a href="">Editar</a></ul>
-    	<ul><a href="">Consultar</a></ul>
-    </li>
-    <li><a href="#">Profesorado</a>
-    	<ul><a href="{{url_for('auth.register_prof')}}">Agregar</a></ul>
-    	<ul><a href="">Buscar</a></ul>
-    	<ul><a href="">Editar</a></ul>
-    	<ul><a href="">Consultar</a></ul>
-    </li>
-    <li><a href="#">Grupos</a>
-    	<ul><a href="">Agregar</a></ul>
-    	<ul><a href="">Buscar</a></ul>
-    	<ul><a href="">Editar</a></ul>
-    	<ul><a href="">Consultar</a></ul>
-    </li>
-    <li><a href="#">Actividades</a>
-    	<ul><a href="">Agregar</a></ul>
-    	<ul><a href="">Buscar</a></ul>
-    	<ul><a href="">Editar</a></ul>
-    	<ul><a href="">Consultar</a></ul>
-    </li>
-    <li><a href="#">Carreras</a>
-    	<ul><a href="">Agregar</a></ul>
-    	<ul><a href="">Buscar</a></ul>
-    	<ul><a href="">Editar</a></ul>
-    	<ul><a href="">Consultar</a></ul>
-    </li>
-    <li><a href="#">Especialidades</a>
-    	<ul><a href="">Agregar</a></ul>
-    	<ul><a href="">Buscar</a></ul>
-    	<ul><a href="">Editar</a></ul>
-    	<ul><a href="">Consultar</a></ul>
-    </li>
-</ul>
+    <div id="header">
+            <ul class="nav">
+               <li><a href="">Estudiantes</a>
+                    <ul>
+                        <li><a href="">Agregar</a></li>
+                        <li><a href="">Eliminar</a></li>
+                        <li><a href="">Buscar</a></li>
+                        <li><a href="">Actualizar</a></li>
+                    </ul>
+               </li>
+               <li><a href="">Grupo</a></li>
+                <li><a href="">Profesorado</a>
+                    <ul>
+                        <li><a href="">Agregar</a></li>
+                        <li><a href="">Eliminar</a></li>
+                        <li><a href="">Buscar</a></li>
+                        <li><a href="">Actualizar</a></li>
+                    </ul>
+                </li>
+                <li><a href="">Actividades</a>
+                    <ul>
+                        <li><a href="">Agregar</a></li>
+                        <li><a href="">Eliminar</a></li>
+                        <li><a href="">Buscar</a></li>
+                        <li><a href="">Actualizar</a></li>
+                        <li><a href="">Revision</a></li>
+                        
+                    </ul>
+                </li>
+                <li><a href="">Carreras</a>
+                    <ul>
+                        <li><a href="">Agregar</a></li>
+                        <li><a href="">Eliminar</a></li>
+                        <li><a href="">Buscar</a></li>
+                        <li><a href="">Actualizar</a></li>
+                        <li><a href="">Revision</a></li>
+                        
+                    </ul>
+                </li>
+                <li><a href="">Especialidades</a>
+                    <ul>
+                        <li><a href="">Agregar</a></li>
+                        <li><a href="">Eliminar</a></li>
+                        <li><a href="">Buscar</a></li>
+                        <li><a href="">Actualizar</a></li>
+                        <li><a href="">Revision</a></li>
+                        
+                    </ul>
+                </li>
+                
+
+                </ul>
+            </div>
+
 
 {% endblock %}
