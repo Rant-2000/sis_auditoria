@@ -37,6 +37,7 @@ def register():
 			return redirect(url_for('todo.admin'))
 		flash(error)
 	return render_template('auth/register.html')
+
 @bp.route('/register_prof',methods=['GET','POST'])
 def register_prof():
 	if request.method=='POST':

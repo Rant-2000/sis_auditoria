@@ -18,8 +18,16 @@
 		<input type="text" name="nc" id="nc" required>
 
 		<label for='group'>Grupo</label>
-		<input type="text" name="group" id="group" required>
 
+		<select class="minimal">
+		<option value="Select">Selecciona....</option>
+		{% for grupo in grupos %}
+
+		<option name="group" id="group" value="{{ grupo['gru_clave'] }}">{{ grupo['gru_clave'] }}</option>
+		{% endfor %}
+		</select>
+		<br>
+		<br>
 		<label for='generacion'>Generacion</label>
 		<input type="text" name="generacion" id="generacion" required>
 
