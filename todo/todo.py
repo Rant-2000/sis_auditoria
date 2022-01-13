@@ -27,7 +27,14 @@ def reg_es():
 		"SELECT * from grupo")
 	grupos=c.fetchall()
 	return render_template('auth/register.html',grupos=grupos)
-
+@bp.route('/registro_prof')
+@login_required
+def reg_prof():
+	db,c=get_db()
+	c.execute(
+		"SELECT * from grupo")
+	grupos=c.fetchall()
+	return render_template('auth/register_prof.html',grupos=grupos)
 @bp.route('/admin')
 @login_required
 def admin():
@@ -40,6 +47,16 @@ def est_page():
 		"CALL getActividades(%s);",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/est_page.html',activity=activity)
+
+@bp.route('/consulta_general_estudiantes',methods=['GET','POST'])
+@login_required
+def cons_gral_es():
+	db,c=get_db()
+	c.execute(
+		"""SELECT e.es_nom 'nom', e.es_apellidos 'app', g.gru_clave 'gr' from estudiante e inner join grupo g on e.fkgrupo=g.gru_id;""")
+	estus=c.fetchall()
+	return render_template('todo/cons_gral_est.html',estus=estus)
+
 @bp.route('/up',methods=['POST'])
 @login_required
 def uploader():

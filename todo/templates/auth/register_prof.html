@@ -7,7 +7,7 @@
 {% block content %}
 	<div class="box">
 		<h1>{% block title %}REGISTRO PROFESOR{% endblock %}</h1>
-		<form method="POST">
+		<form method="POST" action="{{url_for('auth.register_prof')}}">
 		<label for='name'>Nombre</label>
 		<input  type="text" name="name" id="name" required>
 
@@ -17,6 +17,15 @@
 		<label for='nc'>Numero de control</label>
 		<input type="text" name="nc" id="nc" required>
 
+		<select name="group" id="group" class="minimal">
+		<option value="Select">Selecciona....</option>
+		{% for grupo in grupos %}
+
+		<option name="group" id="group" >{{ grupo['gru_clave'] }}</option>
+		{% endfor %}
+		</select>
+		<hr>
+		<br>
 		<label for='email'>Correo</label>
 		<input type="text" name="email" id="email" required>
 
@@ -24,7 +33,7 @@
 		<input type="text" name="username" id="Username" required>
 
 		<label for='password'>Contraseña</label>
-		<input type="text" type="password"name="password" id="password" required>
+		<input type="password" type="password"name="password" id="password" required>
 
 		<input type="submit" value="Registrarse">
 	</form>

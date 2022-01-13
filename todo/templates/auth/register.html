@@ -7,7 +7,7 @@
 {% block content %}
 <div class="box">
 	<h1>Registro de Estudiante</h1>
-	<form method="POST">
+	<form method="POST" action="{{ url_for('auth.register') }}">
 		<label for='name'>Nombre</label>
 		<input  type="text" name="name" id="name" required>
 
@@ -19,11 +19,11 @@
 
 		<label for='group'>Grupo</label>
 
-		<select class="minimal">
+		<select name="group" id="group" class="minimal">
 		<option value="Select">Selecciona....</option>
 		{% for grupo in grupos %}
 
-		<option name="group" id="group" value="{{ grupo['gru_clave'] }}">{{ grupo['gru_clave'] }}</option>
+		<option name="group" id="group" >{{ grupo['gru_clave'] }}</option>
 		{% endfor %}
 		</select>
 		<br>
@@ -40,7 +40,8 @@
 		<label for='password'>Contraseña</label>
 		<input  type="password"name="password" id="password" required>
 
-		<input type="submit" value="Registrarse">
+		<input type="submit"  value="Registrarse">
+
 	</form>
 	</div>
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+<h1>{% block title %}Estudiantes{% endblock %}</h1>
+
+{% endblock %}
+
+{% block content %}
+<ul>
+
+	
+	<table>
+  <tr>
+    <th>Nombre</th>
+    <th>Apellidos</th>
+    <th>Grupo</th>
+  </tr>
+  {% for est in estus %}
+  <tr>
+    <td>{{est['nom']}}</td>
+    <td>{{est['app']}}</td>
+    <td>{{est['gr']}}</td>
+  </tr>
+ 
+</table>
+	{% if not loop.last %}
+	<hr>
+	{% endif %}
+	{% endfor %}
+	
+
+</ul>
+
+{% endblock %}
