@@ -1,15 +1,27 @@
 
 {% extends 'base.html' %}
 {% block header %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/style.css')}}">
+	
+
+{% endblock %}
+
+{% block content %}
 	<h1>{% block title %}Revisar actividad{% endblock %}</h1>
 	<h2>Estudiante: {{revision['es_nom']}} {{revision['es_apellidos']}}</h2>
 	<h2>Titulo {{revision['titulo']}}</h2>
 	<h2>Descripcion {{revision['descripcion']}}</h2>
 	<h2>Fecha de entrega {{revision['entrega']}}</h2>
-{% endblock %}
-
-{% block content %}
-	
+	<select name="group" id="group" class="minimal">
+		<option value="Select">Evaluar...</option>
+		<option name="group" id="group" > Excelente </option>
+		<option name="group" id="group" >Muy bien </option>
+		<option name="group" id="group" >Bien </option>
+		<option name="group" id="group" >Suficiente </option>
+		<option name="group" id="group" >No suficiente </option>
+		<option name="group" id="group" >Cero </option>
+		</select>
+	<textarea name="comment"></textarea>
 	<iframe src="http://docs.google.com/gview?url=
 http://www.educoas.org/portal/bdigital/contenido/valzacchi/ValzacchiCapitulo-2New.pdf
 &embedded=true" style="width:100%; height:700px;" frameborder="0" ></iframe>

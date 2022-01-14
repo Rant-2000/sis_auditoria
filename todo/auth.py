@@ -136,10 +136,11 @@ def load_logged_in_user():
 	else:
 		db, c=get_db()
 		c.execute(
-			'select * from user where user_id= %s',(user_id,)
+			'select u.username,u.fk_rol from user u where user_id=%s',(user_id,)
 		)
 		g.user=c.fetchone()
-
+		
+	
 def login_required(view):
 	@functools.wraps(view)
 	def wrapped_view(**kwargs):
