@@ -2,42 +2,39 @@
 
 {% block header %}
 
-<h1>{% block title %}Actividades{% endblock %}</h1>
-{% if g.user %}
-<a href="{{ url_for('todo.create')}}" class="action">Nuevo</a>
-{% endif %}
+
 {% endblock %}
 
 {% block content %}
 <ul>
-	{% for actividad in activity %}
-	<li class="todo">
-	<div>
 
-		<div class="about">
-			
-			<form action="{{ url_for('todo.uploader') }}" method="POST" enctype="multipart/form-data">
 
-			<input type="text" name="title" id="title" value="{{actividad['titulo']}}">
-			<input type="text" name="codeg" id="codeg" value="{{actividad['Clave']}}">
-			<input type="text" name="esname" id="esname" value="{{actividad['nom']}}">
-			<input type="text" name="eslast" id="eslast" value="{{actividad['app']}}">
-			
-			<h2>Profesor: {{actividad['titular']}}</h2>
-			<p>{{actividad['descripcion']}}</p>
-		 	<input type="file" name="archivo" {% if actividad['entregado']==1 %} disabled {% endif %}>
-		 	<input type="submit" {% if actividad['entregado']==1 %} disabled {% endif %}>
-		 	<textarea id="comment" name="comment" {% if actividad['entregado']==1 %} disabled {% endif %}></textarea>
-			</form>
-		</div>
-		
-		
-	</div>
-	</li>
-	{% if not loop.last %}
-	<hr>
-	{% endif %}
-	{% endfor %}
+<div class="card text-center">
+	
+  
+  <div class="card-header">
+    Anuncios
+  </div>
+
+  <div class="card-body">
+  	<img src="https://picsum.photos/350/150" class="card-img-top" alt="...">
+    <h5 class="card-title">Alguna beca</h5>
+    <p class="card-text">Requisitos</p>
+    <a href="#" class="btn btn-primary">Ver mas</a>
+  </div>
+  <div class="card-footer text-muted">
+    Fecha de subida
+  </div>
+  <div class="card-body">
+  	<img src="https://picsum.photos/300/100" class="card-img-top" alt="...">
+    <h5 class="card-title">Algun aviso</h5>
+    <p class="card-text">Descripcion</p>
+    <a href="#" class="btn btn-primary">Ver mas</a>
+  </div>
+  <div class="card-footer text-muted">
+    Fecha de subida
+  </div>
+</div>
 	
 
 </ul>

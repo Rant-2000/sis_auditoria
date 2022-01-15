@@ -139,8 +139,12 @@ def load_logged_in_user():
 			'select u.username,u.fk_rol from user u where user_id=%s',(user_id,)
 		)
 		g.user=c.fetchone()
-		
-	
+#		get_grupos(user_id)
+#def get_grupos(user_id):
+	#db, c=get_db()
+	#c.execute('CALL getGrupos_prof_usid(%s)',(user_id,))
+	#g.gru_clave=c.fetchall()
+
 def login_required(view):
 	@functools.wraps(view)
 	def wrapped_view(**kwargs):

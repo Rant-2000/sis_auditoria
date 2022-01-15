@@ -116,10 +116,10 @@ def create():
 			db.commit()
 			return redirect(url_for('todo.index'))
 
-@bp.route('/<int:gc>/new_act',methods=['GET','POST'])
+@bp.route('/new_act',methods=['GET','POST'])
 @login_required
-def nueva_actividad(gc):
-	return render_template('todo/new_actividad.html',gc=gc)
+def nueva_actividad():
+	return render_template('todo/new_actividad.html')
 
 @bp.route('/<int:acid>/<int:gc>/revision_ac_gru',methods=['GET','POST'])
 @login_required

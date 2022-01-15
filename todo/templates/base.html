@@ -7,57 +7,65 @@
 
 <section class="content">
 	<header>
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-     <a class="navbar-brand" href="#">
-      <img src="{{ url_for('static', filename='imagenes/logo_itc.jfif') }}" alt="" width="30" height="24" class="d-inline-block align-text-top">
-      Tutorias
-    </a>
-   {% if g.user %}
- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-        </li>
-   {% if g.user['fk_rol']==2 %}
+
   
-        <li class="nav-item dropdown">
+   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><img src="{{ url_for('static',filename='imagenes/logo_itc.jfif') }}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+      Tutorías</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+       {% if g.user['fk_rol']==3 %}
+         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Grupos
+            Actividades
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          {% for grupo in g.grupos %}
-
-            <li><a class="dropdown-item" href="#">{{ grupo['gru_clave'] }}</a></li>
-           
-          
-          {% endfor %}
-         </ul>
+            <li><a class="dropdown-item" href="#">Pendientes</a></li>
+            <li><a class="dropdown-item" href="#">Revisar Actividades</a></li>
+            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+            
+          </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Estadisticas</a>
+{% endif %}
+       {% if g.user['fk_rol']==2 %}
+       {% for activ in activity %}
+		 <form method="POST">
+		 	<li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{activ['Grupo']}}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="{{ url_for('todo.nueva_actividad') }}">Agregar Actividad</a></li>
+            <li><a class="dropdown-item" href="#">Revisar Actividades</a></li>
+            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+          </ul>
         </li>
-        
-     
-  
+		 </form>
+	    {% endfor %}
+       {% endif %}
 
-   {% endif %}
-       </ul>
-      <form class="d-flex" action="{{url_for('auth.logout')}}">
-        <a class="nav-link disabled">{{g.user['username']}}</a>
-        
-		 <button class="btn btn-secondary" type="submit">Cerrar Sesion</button>
+
        
-      </form>
-      
-    </div>
-    {% endif %}
-  </div>
-</nav>
 {% block header %} 
 
 {% endblock %}
-
+</ul>
+    </div>
+    {% if g.user %}
+    <form class="d-flex" action="{{url_for('auth.logout')}}">
+      <a class="nav-link disabled">{{g.user['username']}}</a>
+      <button class="btn btn-secondary" type="submit">Cerrar Sesion</button>
+    </form>
+    {% endif %}
+  </div>
+    
+</nav>
+ 
 	</header>
 {% for message in get_flashed_messages() %}
 <div class="flash">{{message}}</div>
