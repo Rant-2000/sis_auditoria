@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block header %}
-	<h1>{% block title %}Nueva actividad{% endblock %}</h1>
+	
 {% endblock %}
 
 {% block content %}
+<h1>{% block title %}Nueva actividad{% endblock %}</h1>
+<hr>
 	<form method="POST" action="{{ url_for('todo.actividad_novo')}} ">
 		
 
@@ -13,7 +15,7 @@
 		<label for='content'>Contenido</label>
 		<input  name="content" id="content" required>
 
-		<input  name="group" id="group" required value="">
+		<input  name="group" id="group" required value="{{gr}}">
 		<input  type="submit" value="Subir actividad">
 <h3>Criterio a Evaluar</h3>
 <hr/>

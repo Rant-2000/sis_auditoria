@@ -18,36 +18,8 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
-       {% if g.user['fk_rol']==3 %}
-         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Actividades
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Pendientes</a></li>
-            <li><a class="dropdown-item" href="#">Revisar Actividades</a></li>
-            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
-            
-          </ul>
-        </li>
-{% endif %}
-       {% if g.user['fk_rol']==2 %}
-       {% for activ in activity %}
-		 <form method="POST">
-		 	<li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{activ['Grupo']}}
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="{{ url_for('todo.nueva_actividad') }}">Agregar Actividad</a></li>
-            <li><a class="dropdown-item" href="#">Revisar Actividades</a></li>
-            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
-            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
-          </ul>
-        </li>
-		 </form>
-	    {% endfor %}
-       {% endif %}
+      
+       
 
 
        

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block header %}
+ {% if g.user['fk_rol']==3 %}
+         <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Actividades
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="#">Pendientes</a></li>
+            <li><a class="dropdown-item" href="#">Revisar Actividades</a></li>
+            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+            
+          </ul>
+        </li>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+{% for activ in activity %}
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Titulo</label>
+    <div class="col-sm-10">
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ activ['titulo'] }}">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="inputPassword" class="col-sm-2 col-form-label">Descripcion</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" value="{{ activ['descripcion'] }}" disabled>
+    </div>
+  </div>
+  <div>
+  <label for="formFileLg" class="form-label">Elegir Archivo</label>
+ <input class="form-control" type="file" id="formFile">
+</div>
+<br>
+  <div class="col-12">
+    <button class="btn btn-primary center" type="submit">Subir</button>
+  </div>
+<hr>
+{% endfor %}
+</div>
+{% endblock %}

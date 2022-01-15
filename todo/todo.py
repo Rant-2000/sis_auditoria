@@ -42,11 +42,16 @@ def admin():
 @bp.route('/pupilo',methods=['GET','POST'])
 @login_required
 def est_page():
+	return render_template('todo/est_page.html')
+
+@bp.route('/rev_actividades',methods=['GET','POST'])
+@login_required
+def act_pen():
 	db,c=get_db()
 	c.execute(
 		"CALL getActividades(%s);",(g.user['username'],))
 	activity=c.fetchall()
-	return render_template('todo/est_page.html',activity=activity)
+	return render_template('todo/vis_ac_p.html',activity=activity)
 
 @bp.route('/consulta_general_estudiantes',methods=['GET','POST'])
 @login_required
@@ -116,10 +121,12 @@ def create():
 			db.commit()
 			return redirect(url_for('todo.index'))
 
-@bp.route('/new_act',methods=['GET','POST'])
+@bp.route('/<gr>/new_act',methods=['GET','POST'])
 @login_required
-def nueva_actividad():
-	return render_template('todo/new_actividad.html')
+def nueva_actividad(gr):
+	
+	return render_template('todo/new_actividad.html',gr=gr)
+	
 
 @bp.route('/<int:acid>/<int:gc>/revision_ac_gru',methods=['GET','POST'])
 @login_required
@@ -129,7 +136,7 @@ def revi_gru(acid,gc):
 	todo=c.fetchall()
 	return render_template('todo/rev_gru_actividades.html',todo=todo,gc=gc,acid=acid)
 
-@bp.route('/<int:gc>/rev_act',methods=['GET'])
+@bp.route('/<gc>/rev_act',methods=['GET'])
 @login_required
 def rev_actividad(gc):
 	#CALL get_Ac_grupo('rantoso',2);

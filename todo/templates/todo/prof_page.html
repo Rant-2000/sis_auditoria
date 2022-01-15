@@ -2,7 +2,30 @@
 
 {% block header %}
 
+{% if g.user['fk_rol']==2 %}
+       {% for activ in activity %}
+		 
+		 	<li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="gr" name="gr" value="{{activ['Grupo']}}">
+            {{activ['Grupo']}}
+          </a>
 
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+             <form method="POST" >
+           	 
+            <li><a class="dropdown-item" href="{{ url_for('todo.nueva_actividad',gr=activ['Grupo']) }}">Nueva</a></li>
+            </form>
+            <li><a class="dropdown-item" href="{{ url_for('todo.rev_actividad',gc=activ['Grupo']) }}">Revisar <span class="badge bg-primary rounded-pill">1</span></a></li>
+            <li><a class="dropdown-item" href="#">eva</a></li>
+          </ul>
+        </li>
+       
+        	
+        	
+        	
+		 
+	    {% endfor %}
+       {% endif %}
 
 
   
@@ -20,14 +43,14 @@
 	<li class="todo">
 	<div>
 		<p> </p>
-		<form method="POST" action="{{ url_for('todo.nueva_actividad',gc=actividad['gc']) }}">
+		<form method="POST" action="{{ url_for('todo.nueva_actividad',gr=actividad['Grupo']) }}">
 			<div class="about">
 			<h1>Grupo: {{actividad['Grupo']}}</h1>
 			<h2>Carrera: {{actividad['Carrera']}}</h2>
 			
 		</div>
-		<a class="action" href="{{ url_for('todo.nueva_actividad',gc=actividad['gc']) }}">Agregar Actividad</a>
-		<a class="action" href="{{ url_for('todo.rev_actividad',gc=actividad['gc']) }}">Revisar Actividades</a>
+		<a class="action" href="{{ url_for('todo.nueva_actividad',gr=actividad['Grupo']) }}">Agregar Actividad</a>
+		<a class="action" >Revisar Actividades</a>
 		</form>
 		
 		
