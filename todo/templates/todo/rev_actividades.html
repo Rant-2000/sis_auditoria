@@ -4,21 +4,32 @@
 {% endblock %}
 
 {% block content %}
-	<h1>{% block title %}Revisar actividades{% endblock %}</h1>
-	<h2>Grupo {{gc}}</h2>
-		
+
+<blockquote class="blockquote">
+
+	<h1 class="text-center">{% block title %}Revisar actividades{% endblock %}</h1>
+	<h2 class="fs-2 text-center fw-bolder">Grupo {{gc}}</h2>
+</blockquote>		
 
 		{% for actividad in activity %}
-		<form method="POST" action="{{ url_for('todo.revi_gru',acid=actividad['acid'],gc=actividad['gruid'])}}">
-	
-		<label for='title'>Titulo:</label>
-		<input  name="title" id="title" value="{{actividad['titulo']}}">
 
-		<label for='content'>Descripcion</label>
-		<textarea name="content" id="content">{{actividad['des']}}</textarea>
-	
-		<input  type="submit" value="Revisar actividad">
-		</form>
+		<div class="container">
+<form method="POST" action="{{url_for('todo.revi_gru',acid=actividad['acid'],gc=actividad['gruid'])}}">
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Actividad</label>
+    <input type="email" class="form-control" name="title" id="title" aria-describedby="emailHelp" value="{{actividad['titulo']}}" readonly>
+    
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Descripcion</label>
+    <input type="email" class="form-control" name="content" id="content" aria-describedby="emailHelp" value="{{actividad['des']}}" readonly>
+   
+  </div>
+  <button type="submit" class="btn btn-primary">Revisar</button>
+  <button type="submit" class="btn btn-secondary">Terminar</button>
+</form>
+		</div>
+		
 		{% if not loop.last %}
 	<hr>
 	{% endif %}

@@ -9,12 +9,13 @@
           </a>
           
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Pendientes</a></li>
-            <form method="POST">
-            <li><a class="dropdown-item" href="{{ url_for('todo.act_pen') }}">Revisar Actividades</a></li>
-            </form>
-            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+          	<form method="POST">
+            <li><a class="dropdown-item" href="{{ url_for('todo.act_pen') }}">Pendientes <span class="badge bg-primary rounded-pill">*</span></a></li>
             
+            <li><a class="dropdown-item" href="">Revisar Actividades</a></li>
+            
+            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+            </form>
           </ul>
           
         </li>
@@ -23,6 +24,7 @@
 {% endblock %}
 
 {% block content %}
+ <h1>Actividades Pendientes</h1>
 <ul>
 
 

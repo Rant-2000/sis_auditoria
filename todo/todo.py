@@ -62,40 +62,47 @@ def cons_gral_es():
 	estus=c.fetchall()
 	return render_template('todo/cons_gral_est.html',estus=estus)
 
-@bp.route('/up',methods=['POST'])
+@bp.route('/<int:acid>/<name>/<last>/<gr>/<titulo>/up',methods=['POST'])
 @login_required
-def uploader():
+def uploader(acid,name,last,gr,titulo):
 	if request.method == 'POST':
-		grupo=request.form['codeg']
-		esname=request.form['esname']
-		eslast=request.form['eslast']
-		title=request.form['title']
-		fullname=esname+"_"+eslast
+		
+		fullname=name+"_"+last
+		grupo=gr
+		title=titulo
 		comment=request.form['comment']
 		print('FULL: ',fullname)
 		rutaf=crea_dir('2021',grupo,fullname,title)
-		db,c=get_db()
-		print('ID USUARIO ',g.user['user_id'])
+		
+		print('USERNAME ',g.user['username'])
 		print('RUTA: ',rutaf)
 		print('Comentario ',comment)
 		print('Titulo: ',title)
-		c.execute("SELECT isEntregado(%s,%s) as 'estado'",(g.user['user_id'],title))
-		esEntregado=c.fetchone()
-		#if esEntregado==0:
+		#c.execute("SELECT isEntregado(%s,%s) as 'estado'",(g.user['username'],acid))
+		#esEntregado=c.fetchone()
+		#if esEntregado is None:
 		rutastr=str(rutaf)
-		c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['user_id'],rutastr,comment,title))
-		#`alta_es_ac`(userid int,ruta mediumtext,estcomm mediumtext,titulop varchar(30) )
+		#(usern varchar(25),acid int,ruta mediumtext,estcomm mediumtext)
+		
+		db,c=get_db()
+		c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,rutastr,comment))
 		db.commit()
 		f = request.files['archivo']
 		filename = secure_filename(f.filename)
-		
+			
 		f.save(os.path.join(rutaf, filename))
+		#`alta_es_ac`(userid int,ruta mediumtext,estcomm mediumtext,titulop varchar(30) )
+		
+		
 		#else:
 		#	flash('Ya ha sido entregado anteriormente')
 
 		
 	 
 		return redirect(url_for('todo.est_page'))
+
+
+	
 @bp.route('/tutor',methods=['GET','POST'])
 @login_required
 def prof_page():
@@ -131,12 +138,16 @@ def nueva_actividad(gr):
 @bp.route('/<int:acid>/<int:gc>/revision_ac_gru',methods=['GET','POST'])
 @login_required
 def revi_gru(acid,gc):
-	db, c=get_db()
-	c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
-	todo=c.fetchall()
-	return render_template('todo/rev_gru_actividades.html',todo=todo,gc=gc,acid=acid)
+	if request.method=="POST":
+		db, c=get_db()
+		titulo=request.form['title']
+		c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
+		todo=c.fetchall()
+		
+		return render_template('todo/rev_gru_actividades.html',tt=titulo,todo=todo,gc=gc,acid=acid)
 
-@bp.route('/<gc>/rev_act',methods=['GET'])
+
+@bp.route('/<gc>/activ_pendientes',methods=['GET'])
 @login_required
 def rev_actividad(gc):
 	#CALL get_Ac_grupo('rantoso',2);
@@ -166,23 +177,31 @@ def actividad_novo():
 		
 		c.execute('CALL alta_actividad(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',(grupo,g.user['username'],title,content,v0,v1,v2,v3,v4,v5))
 		db.commit()
-		flash("Se ha agregado la actividad")
+		flash("Se ha agregado la actividad",'info')
 		return redirect(url_for('todo.prof_page'))
 	
-@bp.route('/rev_ind',methods=['POST'])
+@bp.route('/<nc>/<int:acid>/rev_ind',methods=['POST'])
 @login_required
-def rev_ind():
+def rev_ind(nc,acid):
 	if request.method=='POST':
 		#intentar declarar el grupo de otra manera
-		nc=request.form['nc']
-		acid=request.form['acid']
+		
 		db, c=get_db()
 		
 		c.execute('CALL getAct_ind(%s,%s)',(acid,nc))
 		revision=c.fetchone()
+		#c.close()
+		
+		#db, c=get_db()
+
+		#c.execute("SELECT ac.Des from ac_cr ac  inner join actividad a on ac.fk_ac=a.act_id where a.act_id=%s",(acid,))
+		
+		criterios=c.fetchall()
+
+
 		#db.commit()
 		
-		return render_template('todo/vis_cal_actividad.html',revision=revision)
+		return render_template('todo/vis_cal_actividad.html',revision=revision,criterios=criterios)
 
 def get_todo(id):
 	db, c=get_db()

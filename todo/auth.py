@@ -35,7 +35,7 @@ def register():
 			db.commit()
 			#return redirect(url_for('auth.login'))
 			return redirect(url_for('todo.admin'))
-		flash(error)
+		flash(u'Invalid password provided', 'error')
 	return render_template('auth/register.html')
 
 @bp.route('/register_prof',methods=['GET','POST'])
@@ -114,16 +114,19 @@ def login():
 			tipo_user=rol["get_rolid('"+usu+"')"]
 			
 			if tipo_user==1:
+				flash('Has logueado exitosamente','success')
 				return redirect(url_for('todo.admin'))
 			elif tipo_user==2:
+				flash('Has logueado exitosamente','success')
 				return redirect(url_for('todo.prof_page'))
 			elif tipo_user==3:
+				flash('Has logueado exitosamente','success')
 				return redirect(url_for('todo.est_page'))
 
 
 			
 
-		flash(error)
+		flash(error,'danger')
 
 	return render_template('auth/login.html')
 
@@ -157,4 +160,5 @@ def login_required(view):
 @bp.route('/logout')
 def logout():
 	session.clear()
+	flash('Has salido','warning')
 	return redirect(url_for('auth.login'))

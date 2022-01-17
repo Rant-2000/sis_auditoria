@@ -7,45 +7,88 @@
 {% endblock %}
 
 {% block content %}
-	<h1>{% block title %}Revisar actividad{% endblock %}</h1>
-	<h2>Estudiante: {{revision['es_nom']}} {{revision['es_apellidos']}}</h2>
-	<h2>Titulo {{revision['titulo']}}</h2>
-	<h2>Descripcion {{revision['descripcion']}}</h2>
-	<h2>Fecha de entrega {{revision['entrega']}}</h2>
+<div class="container-fluid">
+	
+	<div class="row">
+    <div class="col-8">
+    	<h1 class="display-5 text-center">{% block title %}Revisar actividad{% endblock %}</h1>
+
+    	<embed src="http://biblio3.url.edu.gt/Libros/provinciales/computadoras.pdf" type="application/pdf" width="100%" height="600px" />
+
+    </div>
+    <div class="col-4">
+    	
+	<dl class="row">
+  <dt class="col-sm-3">Titulo</dt>
+  <dd class="col-sm-9">{{revision['titulo']}}</dd>
+
+  <dt class="col-sm-3">Descripcion</dt>
+  <dd class="col-sm-9">
+    <p>{{revision['descripcion']}}</p>
+  </dd>
+
+
+
+  <dt class="col-sm-3">Alumno</dt>
+  <dd class="col-sm-9">
+    <dl class="row">
+      <dt class="col-sm-4">{{revision['es_nom']}} {{revision['es_apellidos']}}</dt>
+      <dd class="col-sm-8">Entregado: {{revision['entrega']}}</dd>
+    </dl>
+  </dd>
+</dl>
+<form>
 	<div class="list-group">
-  <label class="list-group-item">
+		<h5 class="display-5">Criterio a Evaluar</h5>
+    {% for cri in criterios %}
+<label class="list-group-item">
     <input class="form-check-input me-1" type="checkbox" value="">
-    First checkbox
+    {{cri['rub']}}
   </label>
-  <label class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" value="">
-    Second checkbox
-  </label>
-  <label class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" value="">
-    Third checkbox
-  </label>
-  <label class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" value="">
-    Fourth checkbox
-  </label>
-  <label class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" value="">
-    Fifth checkbox
-  </label>
+
+    {% endfor %}
+
+  
+  
 </div>
-	<select name="group" id="group" class="minimal">
-		<option value="Select">Evaluar...</option>
-		<option name="group" id="group" > Excelente </option>
-		<option name="group" id="group" >Muy bien </option>
-		<option name="group" id="group" >Bien </option>
-		<option name="group" id="group" >Suficiente </option>
-		<option name="group" id="group" >No suficiente </option>
-		<option name="group" id="group" >Cero </option>
-		</select>
-	<textarea name="comment"></textarea>
-	<iframe src="http://docs.google.com/gview?url=
-http://www.educoas.org/portal/bdigital/contenido/valzacchi/ValzacchiCapitulo-2New.pdf
-&embedded=true" style="width:100%; height:700px;" frameborder="0" ></iframe>
+<hr>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Puntuacion</label>
+    <div class="form-floating">
+  <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+    <option selected>Selecciona una calificacion</option>
+   	<option value="0">Cero </option>
+    <option value="1">No suficiente</option>
+    <option value="2">Suficiente</option>
+    <option value="3">Bien</option>
+    <option value="4">Muy bien</option>
+    <option value="5">Excelente</option>
+  </select>
+  <label for="floatingSelect">Agrega una calificacion</label>
+</div>
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Comentario</label>
+    <div class="form-floating">
+  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+  <label for="floatingTextarea2">Agregar Comentario</label>
+  <br>
+  <button type="submit" class="btn btn-primary center">Hecho</button>
+</div>
+  </div>
+  <br>
+  
+  <br>
+</form>
+
+
+    </div>
+  </div>
+
+		
+	
+	
+</div>
+	
 	
 {% endblock %}
