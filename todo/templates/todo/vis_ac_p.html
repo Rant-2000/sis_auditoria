@@ -21,7 +21,9 @@
 <div class="container-sm">
   
 {% for activ in activity %}
-<form method="POST" action="{{ url_for('todo.uploader',acid=activ['acid'],name=activ['nom'],last=activ['app'],gr=activ['gr'],titulo=activ['titulo']) }}" enctype="multipart/form-data">
+{% if activ['estado']!= Null %}
+
+<form method="POST" action="{{ url_for('todo.ac_vis_full',acid=activ['acid']) }}" >
   <div class="mb-3 row">
     <label for="staticEmail" class="col-sm-2 col-form-label">Titulo</label>
     <div class="col-sm-10">
@@ -35,30 +37,12 @@
       <input type="text" class="form-control" value="{{ activ['descripcion'] }}" disabled>
     </div>
   </div>
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Rubrica</h5>
-    
-    <p class="card-text">Aqui va la rubrica</p>
-    
-  </div>
-</div>
 
-  <div>
-  <label for="formFileLg" class="form-label">Elegir Archivo</label>
- <input class="form-control" type="file" id="archivo" name="archivo">
-</div>
 <br>
 
-<div class="mb-3 row">
-  <div class="form-floating">
-  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea comment" name="comment"></textarea>
-  <label for="floatingTextarea">Commentario</label>
-</div>
-    
-  </div>
+
   <div class="col-12">
-    <button class="btn btn-success center" type="submit" >Subir</button>
+    
     <button class="btn btn-warning center" type="submit" >Abrir</button>
     
   </div>
@@ -69,6 +53,8 @@
 </div>
  </form>
 <hr>
+{% endif %}
+
 {% endfor %}
 </div>
 {% endblock %}

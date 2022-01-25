@@ -1,7 +1,7 @@
 import mysql.connector
 
 import click
-from flask import current_app, g
+from flask import current_app, g,abort
 from flask.cli import with_appcontext
 from .schema import instructions
 
