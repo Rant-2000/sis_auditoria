@@ -167,6 +167,45 @@ def login_required(view):
 
 	return wrapped_view
 
+def solo_admin(view):
+	@functools.wraps(view)
+	def wrapped_view(**kwargs):
+		if g.user['fk_rol']!=1:
+
+			abort(403)
+		return view(**kwargs)
+
+def solo_prof(view):
+	@functools.wraps(view)
+	def wrapped_view(**kwargs):
+		if g.user['fk_rol']!=2:
+
+			abort(403)
+		return view(**kwargs)
+
+	return wrapped_view
+def solo_ar(view):
+	@functools.wraps(view)
+	def wrapped_view(**kwargs):
+		if g.user['fk_rol']!=1 or g.user['fk_rol']!=2:
+			
+			abort(403)
+		return view(**kwargs)
+
+	return wrapped_view
+
+def solo_es(view):
+	@functools.wraps(view)
+	def wrapped_view(**kwargs):
+		if g.user['fk_rol']!=3:
+			
+			abort(403)
+		return view(**kwargs)
+
+	return wrapped_view
+
+
+
 @bp.route('/logout')
 def logout():
 	session.clear()

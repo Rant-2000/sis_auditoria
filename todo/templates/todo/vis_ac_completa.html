@@ -43,30 +43,30 @@
 
   
 
-    {% if revision['pun']==-1 or revision == None %}
+    {% if ac['pun']==-1 or ac == None %}
 
 <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Pendiente</div>
 
 
 
-    {% elif revision['pun']==0 %}
+    {% elif ac['pun']==0 %}
 <div class="progress-bar progress-bar-striped bg-danger progress-bar-animated" role="progressbar" style="width: 10%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Cero</div>
 
 
-    {% elif revision['pun']==1 %}
+    {% elif ac['pun']==1 %}
 <div class="progress-bar progress-bar-striped bg-danger progress-bar-animated" role="progressbar" style="width: 20%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">No suficiente</div>
 
-    {% elif revision['pun']==2 %}
+    {% elif ac['pun']==2 %}
  <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Suficiente</div>
 
-    {% elif revision['pun']==3 %}
+    {% elif ac['pun']==3 %}
 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 60%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Bien</div>
 
-    {% elif revision['pun']==4 %}
+    {% elif ac['pun']==4 %}
     <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: 80%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Muy bien</div>
 
 
-    {% elif revision['pun']==5  %}
+    {% elif ac['pun']==5  %}
 <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Excelente</div>
 
     {% endif %}
@@ -85,16 +85,22 @@
      <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Comentario Profesor</label>
     <div class="form-floating">
-  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" readonly>{{revision['pc']}}</textarea>
+  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" readonly>{% if ac['pc'] != None %}
+{{ac['pc']}}
+
+{% endif %}
+
+  </textarea>
 <br>
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('todo.uploader',acid=ac['acid'],name=ac['nom'],last=ac['app'],gr=ac['gc'],titulo=ac['titulo']) }}">
  <div>
-  <label for="formFileLg" class="form-label">Elegir Archivo</label>
- <input class="form-control" type="file" id="archivo" name="archivo" {% if revision['ent']!=Null %} disabled {% endif %}>
+  <label for="formFileLg" class="form-label" >Elegir Archivo</label>
+ <input class="form-control" type="file" id="file" name="file" 
+ {% if ac['en']==1 %} disabled {% endif %} oninput="filesize(this);">
 </div>
 <br>
 <div class="d-grid gap-2">
-  <button type="button submit" class="btn btn-success" {% if revision['ent']!=Null %} disabled {% endif %}>Subir Entrega</button>
+  <button type="button submit" class="btn btn-success" {% if ac['en']==1 %} disabled {% endif %}>Subir Entrega</button>
 
 </div>
   <br>
@@ -118,14 +124,22 @@
 
    
    </form>
-   <form class="" action="" method="POST", enctype="multipart/form-data">
-            {{  form.file()  }}
-        {{ form.submit(  class="btn btn-primary"  )  }}
-      </form>
+  
   </div>
     </div>
   </div>
   
   <br>
 	
+{% endblock %}
+{% block script %}
+
+<script>
+
+  function filesize(elem){
+    document.cookie = `filesize=${elem.files[0].size}`
+  }
+
+</script>
+
 {% endblock %}

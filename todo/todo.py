@@ -2,7 +2,7 @@ from flask import (
 	Blueprint,flash,g,redirect,render_template,request,url_for,abort,send_file
 )
 from werkzeug.exceptions import abort
-from todo.auth import login_required
+from todo.auth import login_required,solo_admin,solo_ar,solo_es,solo_prof
 from todo.db import get_db
 from werkzeug.utils import secure_filename
 import os
@@ -53,7 +53,14 @@ def est_page():
 def act_pen():
 	db,c=get_db()
 	c.execute(
-		"CALL getActividades(%s);",(g.user['username'],))
+		"""
+		SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
+		ea.entregado 'estado' ,a.act_id 'acid' from es_ac ea
+		inner join actividad a on ea.fk_ac=a.act_id
+		inner join estudiante e on ea.fk_es=e.nc
+		inner join user u on e.fkuser=u.user_id
+		where u.username=%s AND ea.entregado=0;
+		""",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/vis_ac_p.html',activity=activity)
 
@@ -61,20 +68,15 @@ def act_pen():
 @login_required
 def act_pas():
 	db,c=get_db()
-	c.execute(
-		"""
-		SELECT a.titulo 'titulo',a.descripcion 'descripcion', g.gru_clave 'Clave',e.es_nom 'nom',e.es_apellidos 'app',
-		ea.entregado 'estado' ,a.act_id 'acid',g.gru_clave 'gr'
-		from es_ac ea
+	c.execute("""SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
+		ea.entregado 'estado' ,a.act_id 'acid',ea.puntuacion 'pun' from es_ac ea
 		inner join actividad a on ea.fk_ac=a.act_id
-		inner join profesor p on a.titular=prof_id 
-		inner join estudiante e on e.fkgrupo=a.fk_grupo  
+		inner join estudiante e on ea.fk_es=e.nc
 		inner join user u on e.fkuser=u.user_id
-		inner join grupo g on e.fkgrupo=g.gru_id  
-		where u.username=%s;
-		""",(g.user['username'],))
+		where u.username=%s AND ea.entregado=%s
+		""",(g.user['username'],1))
 	activity=c.fetchall()
-	return render_template('todo/vis_ac_p.html',activity=activity)
+	return render_template('todo/vis_ac_ter.html',activity=activity)
 
 @bp.route('/consulta_general_estudiantes',methods=['GET','POST'])
 @login_required
@@ -112,44 +114,21 @@ def bus_es():
 		#return render_template('todo/cons_gral_est.html',res=res)
 
 
-@bp.route('/<int:acid>/<name>/<last>/<gr>/<titulo>/up',methods=['POST'])
+@bp.route('/<int:acid>/up',methods=['POST'])
 @login_required
-def uploader(acid,name,last,gr,titulo):
+def uploader(acid):
 	if request.method == 'POST':
-		
-		fullname=name+"_"+last
-		grupo=gr
-		title=titulo
 		comment=request.form['comment']
-		print('FULL: ',fullname)
-		rutaf=crea_dir('2021',grupo,fullname,title)
 		
-		print('USERNAME ',g.user['username'])
-		print('RUTA: ',rutaf)
-		print('Comentario ',comment)
-		print('Titulo: ',title)
-		#c.execute("SELECT isEntregado(%s,%s) as 'estado'",(g.user['username'],acid))
-		#esEntregado=c.fetchone()
-		#if esEntregado is None:
-		rutastr=str(rutaf)
-		#(usern varchar(25),acid int,ruta mediumtext,estcomm mediumtext)
-		
+        ##Sirve
 		db,c=get_db()
-		c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,rutastr,comment))
+		c.execute('CALL alta_es_ac(%s,%s,%s)',(g.user['username'],acid,comment))
 		db.commit()
-		f = request.files['archivo']
-		filename = secure_filename(f.filename)
-			
-		f.save(os.path.join(rutaf, filename))
-		#`alta_es_ac`(userid int,ruta mediumtext,estcomm mediumtext,titulop varchar(30) )
-		
-		
-		#else:
-		#	flash('Ya ha sido entregado anteriormente')
-
-		
-	 
+		flash('Hecho','success')
 		return redirect(url_for('todo.est_page'))
+					#SIRVE
+
+
 
 @bp.route('/<int:acid>/<nc>/revisado',methods=['POST'])
 @login_required
@@ -164,6 +143,25 @@ def revisado(acid,nc):
 		db.commit()
 		return redirect(url_for('todo.prof_page'))
 
+@bp.route('/<int:acid>/<nc>/subirblob',methods=['POST'])
+@login_required
+def subirblob(acid,nc):
+	form = UploadForm()
+	if request.method == 'POST':
+		if form.validate_on_submit():
+			file_name = form.file.data
+            #database(name=file_name.filename, data=file_name.read() )
+            
+
+			comment="comentario equis"
+			
+			print("Comentario "+comment)
+			
+			db,c=get_db()
+			c.execute("UPDATE es_ac SET data = %s WHERE (fk_ac = %s AND fk_es=%s)",(file_name.read(),acid,nc))
+			db.commit()
+			return redirect(url_for('todo.prof_page'))
+
 	
 @bp.route('/tutor',methods=['GET','POST'])
 @login_required
@@ -173,6 +171,58 @@ def prof_page():
 	c.execute("SELECT g.gru_clave 'Grupo',c.codigo 'Carrera',g.gru_id 'gc' from grupo g inner join carrera c on g.fk_carrera=c.car_id  inner join profesor p on g.fk_tutor=p.prof_id inner join user u on u.user_id=p.fkuser where u.username=%s;",(g.user['username'],))
 	activity=c.fetchall()
 	return render_template('todo/prof_page.html',activity=activity)
+
+@bp.route('/bus_in_es')
+@login_required
+def bus_in_es():
+	dato=None
+	return render_template('todo/bus_in_es.html',dato=dato)
+
+@bp.route('/bus_indiv_es',methods=['GET','POST'])
+@login_required
+def bus_indiv_es():
+	if request.method=='POST':
+		usu=request.form['usu']
+		code=request.form['code']
+
+		db, c=get_db()
+		dato=None
+		if usu:
+			c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+			from estudiante e
+			inner join user u on e.fkuser=u.user_id
+			inner join grupo g on e.fkgrupo=g.gru_id
+			inner join carrera c on g.fk_carrera=c.car_id
+			where u.username=%s;
+			""",(usu,))
+			dato=c.fetchone()
+			
+
+		if code:
+			c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+			from estudiante e
+			inner join user u on e.fkuser=u.user_id
+			inner join grupo g on e.fkgrupo=g.gru_id
+			inner join carrera c on g.fk_carrera=c.car_id
+			where e.nc=%s;
+			""",(code,))
+			dato=c.fetchone()
+				 
+
+		if usu and code:
+			c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+			from estudiante e
+			inner join user u on e.fkuser=u.user_id
+			inner join grupo g on e.fkgrupo=g.gru_id
+			inner join carrera c on g.fk_carrera=c.car_id
+			where e.nc=%s;
+			""",(code,))
+			dato=c.fetchone()
+
+
+		return render_template('todo/bus_in_es.html',dato=dato)
+	
+
 
 @bp.route('/create',methods=['GET','POST'])
 @login_required
@@ -228,8 +278,7 @@ def actividad_novo():
 		grupo=request.form['group']
 		title=request.form['title']
 		content=request.form['content']
-	
-		
+
 		db, c=get_db()
 		
 		c.execute('CALL alta_actividad(%s,%s,%s,%s)',(grupo,g.user['username'],title,content))
@@ -263,28 +312,17 @@ def ac_vis_full(acid):
 		
 		db, c=get_db()
 		c.execute("""
-			 SELECT a.act_id 'acid',e.es_nom 'nom',e.es_apellidos 'app',g.gru_clave 'gc',a.titulo,a.descripcion from actividad a 
-			 inner join estudiante e on e.fkgrupo=a.fk_grupo
-			 inner join grupo g on g.gru_id=e.fkgrupo
-			 inner join user u on e.fkuser=u.user_id
-			 where a.act_id=%s and u.username=%s;
+			SELECT e.nc 'nc',ea.puntuacion 'pun',ea.prof_comment 'pc', 
+			ea.entregado 'en' ,a.act_id 'acid',e.es_nom 'nom',
+			e.es_apellidos 'app',a.titulo,a.descripcion 
+			from es_ac ea
+			inner join actividad a on ea.fk_ac=a.act_id
+			inner join estudiante e on e.nc=ea.fk_es
+			inner join user u on e.fkuser=u.user_id
+			where a.act_id=%s and u.username=%s;
 			""",(acid,g.user['username']))
 		ac=c.fetchone()
-		c.execute("""
-	 SELECT ea.entregado 'ent' ,ea.entrega,ea.est_comment,ea.prof_comment 'pc' ,ea.puntuacion 'pun' from es_ac ea
-	 inner join estudiante e on ea.fk_es=e.nc
-	 inner join user u on e.fkuser=u.user_id
-	 where u.username=%s and ea.fk_ac=%s;
-			""",(g.user['username'],acid))
-		revision=c.fetchone()
-
-		#c.execute('CALL getAct_ind_idu_acid(%s,%s)',(g.user['username'],acid))
-		#revision=c.fetchone()
-		
-		
-		
-		
-		return render_template('todo/vis_ac_completa.html',revision=revision,ac=ac,form=form)
+		return render_template('todo/vis_ac_completa.html',ac=ac,form=form)
 
 
 def get_todo(id):

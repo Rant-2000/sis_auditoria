@@ -32,7 +32,12 @@
 		
 		{% if not loop.last %}
 	<hr>
+	{% else %}
+
 	{% endif %}
 	{% endfor %}
-	
+
+	{% if not activity %}
+	<img src="https://webstockreview.net/images/clipart-exercise-kawaii-10.png" class="img-fluid" alt="Ups!">
+	{% endif %}
 {% endblock %}

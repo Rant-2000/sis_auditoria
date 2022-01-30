@@ -1,19 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
- {% if g.user['fk_rol']==3 %}
-         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Actividades
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Pendientes</a></li>
-            <li><a class="dropdown-item" href="#">Revisar Actividades</a></li>
-            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
-            
-          </ul>
-        </li>
-{% endif %}
+
 
 {% endblock %}
 
@@ -21,7 +9,7 @@
 <div class="container-sm">
   
 {% for activ in activity %}
-{% if activ['estado']!= Null %}
+
 
 <form method="POST" action="{{ url_for('todo.ac_vis_full',acid=activ['acid']) }}" >
   <div class="mb-3 row">
@@ -53,8 +41,16 @@
 </div>
  </form>
 <hr>
-{% endif %}
+
 
 {% endfor %}
+
+{% if not activity %}
+<h2 class="display-3 text-center">No hay actividades pendientes </h2>
+
+
+  <img src="https://www.freeiconspng.com/uploads/pikachu-transparent-29.gif" class="img-fluid float-center" alt="Ups!">
+  {% endif %}
+
 </div>
 {% endblock %}

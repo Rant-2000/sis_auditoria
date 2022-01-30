@@ -3,7 +3,9 @@
  <link rel="icon" type="image/x-icon" href="{{url_for('static',filename='imagenes/logo_itc.jfif')}}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>	
+{% block script %}
 
+{% endblock %}
 
 <section class="content">
 	<header>
@@ -11,7 +13,16 @@
   
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src="{{ url_for('static',filename='imagenes/logo_itc.jfif') }}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+    <a class="navbar-brand" href="
+{% if g.user['fk_rol']==1 %}
+{{url_for('todo.admin')}}
+{% elif g.user['fk_rol']==2 %}
+{{url_for('todo.prof_page')}}
+{% elif g.user['fk_rol']==3 %}
+{{url_for('todo.est_page')}}
+{% endif %}
+
+    "><img src="{{ url_for('static',filename='imagenes/logo_itc.jfif') }}" alt="" width="30" height="24" class="d-inline-block align-text-top">
       Tutorías</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -33,7 +44,7 @@
              
             <li><a class="dropdown-item" href="{{url_for('todo.reg_es')}}">Nuevo</a></li>
             <li><a class="dropdown-item" href="#">Eliminar</a></li>
-            <li><a class="dropdown-item" href="#">Buscar</a></li>
+            <li><a class="dropdown-item" href="{{url_for('todo.bus_in_es')}}">Buscar</a></li>
             <li><a class="dropdown-item" href="#">Editar</a></li>
             <li><a class="dropdown-item" href="{{url_for('todo.cons_gral_es')}}">Consultar</a></li>
             </form>
@@ -156,6 +167,25 @@
 
      
        {% endif %}
+
+{% if g.user['fk_rol']==3 %}
+         <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Actividades
+          </a>
+          
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <form method="POST">
+            <li><a class="dropdown-item" href="{{ url_for('todo.act_pen') }}">Pendientes <span class="badge bg-primary rounded-pill">*</span></a></li>
+            
+            <li><a class="dropdown-item" href="{{ url_for('todo.act_pas') }}">Actividades Anteriores</a></li>
+            
+            <li><a class="dropdown-item" href="#">Evaluaciones</a></li>
+            </form>
+          </ul>
+          
+        </li>
+{% endif %}
 
 
  
