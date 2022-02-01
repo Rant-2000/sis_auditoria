@@ -26,33 +26,54 @@ def index():
 @bp.route('/registro_es')
 @login_required
 def reg_es():
-	db,c=get_db()
-	c.execute(
+	print('Entra al method')
+	if  g.user['fk_rol']==1:
+		print('Entra al if reg es')
+		db,c=get_db()
+		c.execute(
 		"SELECT * from grupo")
-	grupos=c.fetchall()
-	return render_template('auth/register.html',grupos=grupos)
+		grupos=c.fetchall()
+		return render_template('auth/register.html',grupos=grupos)
+	else:
+		return abort(403)
 @bp.route('/registro_prof')
 @login_required
 def reg_prof():
-	db,c=get_db()
-	c.execute(
-		"SELECT * from grupo")
-	grupos=c.fetchall()
-	return render_template('auth/register_prof.html',grupos=grupos)
+	if  g.user['fk_rol']==1:
+		db,c=get_db()
+		c.execute(
+			"SELECT * from grupo")
+		grupos=c.fetchall()
+		return render_template('auth/register_prof.html',grupos=grupos)
+	else :
+		return abort(403)
 @bp.route('/admin')
 @login_required
 def admin():
-	return render_template('todo/admin.html')
+	if  g.user['fk_rol']==1:
+		return render_template('todo/admin.html')
+	else:
+
+		return abort(403)
+
+
+	
 @bp.route('/pupilo',methods=['GET','POST'])
 @login_required
 def est_page():
-	return render_template('todo/est_page.html')
+	if  g.user['fk_rol']==3:
+		return render_template('todo/est_page.html')
+	else:
+
+		return abort(403)
+	
 
 @bp.route('/rev_actividades',methods=['GET','POST'])
 @login_required
 def act_pen():
-	db,c=get_db()
-	c.execute(
+	if  g.user['fk_rol']==3:
+		db,c=get_db()
+		c.execute(
 		"""
 		SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
 		ea.entregado 'estado' ,a.act_id 'acid' from es_ac ea
@@ -61,48 +82,63 @@ def act_pen():
 		inner join user u on e.fkuser=u.user_id
 		where u.username=%s AND ea.entregado=0;
 		""",(g.user['username'],))
-	activity=c.fetchall()
-	return render_template('todo/vis_ac_p.html',activity=activity)
+		activity=c.fetchall()
+		return render_template('todo/vis_ac_p.html',activity=activity)
+	else:
+
+		return abort(403)
+	
 
 @bp.route('/act_pas',methods=['GET','POST'])
 @login_required
 def act_pas():
-	db,c=get_db()
-	c.execute("""SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
-		ea.entregado 'estado' ,a.act_id 'acid',ea.puntuacion 'pun' from es_ac ea
-		inner join actividad a on ea.fk_ac=a.act_id
-		inner join estudiante e on ea.fk_es=e.nc
-		inner join user u on e.fkuser=u.user_id
-		where u.username=%s AND ea.entregado=%s
-		""",(g.user['username'],1))
-	activity=c.fetchall()
-	return render_template('todo/vis_ac_ter.html',activity=activity)
+	if  g.user['fk_rol']==3:
+
+
+		db,c=get_db()
+		c.execute("""SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
+			ea.entregado 'estado' ,a.act_id 'acid',ea.puntuacion 'pun' from es_ac ea
+			inner join actividad a on ea.fk_ac=a.act_id
+			inner join estudiante e on ea.fk_es=e.nc
+			inner join user u on e.fkuser=u.user_id
+			where u.username=%s AND ea.entregado=%s
+			""",(g.user['username'],1))
+		activity=c.fetchall()
+		return render_template('todo/vis_ac_ter.html',activity=activity)
+	else:
+		abort(403)
 
 @bp.route('/consulta_general_estudiantes',methods=['GET','POST'])
 @login_required
 def cons_gral_es():
-	db,c=get_db()
-	c.execute(
-		"""SELECT * from carrera""")
-	grupos=c.fetchall()
-	return render_template('todo/cons_gral_est.html',grupos=grupos)
+	if  g.user['fk_rol']==1:
+		db,c=get_db()
+		c.execute(
+			"""SELECT * from carrera""")
+		grupos=c.fetchall()
+		return render_template('todo/cons_gral_est.html',grupos=grupos)
+	else:
+		abort(403)
 
 @bp.route('/bus_es',methods=['GET','POST'])
 @login_required
 def bus_es():
-	form = SearchForm(request.form)
-	if request.method == 'POST'and form.validate():
-		nc=request.form['nc']
-		gc=request.form['gc']
-		cc=request.form['cc']
-		
-		db,c=get_db()
-		if nc :
-			c.execute(
-			"SELECT e.* from estudiante e where e.nc=%s",(nc,))
-			res=c.fetchall()
-			return redirect(url_for('todo/cons_gral_est.html',res=res))
-		flash('No entraste','danger')
+	if  g.user['fk_rol']==1:
+		form = SearchForm(request.form)
+		if request.method == 'POST'and form.validate():
+			nc=request.form['nc']
+			gc=request.form['gc']
+			cc=request.form['cc']
+			
+			db,c=get_db()
+			if nc :
+				c.execute(
+				"SELECT e.* from estudiante e where e.nc=%s",(nc,))
+				res=c.fetchall()
+				return redirect(url_for('todo/cons_gral_est.html',res=res))
+			flash('No entraste','danger')
+	else:
+		abort(403)
 		#elif gc:
 		#	c.execute(
 		#	"""SELECT * from carrera""")
@@ -118,14 +154,17 @@ def bus_es():
 @login_required
 def uploader(acid):
 	if request.method == 'POST':
-		comment=request.form['comment']
-		
-        ##Sirve
-		db,c=get_db()
-		c.execute('CALL alta_es_ac(%s,%s,%s)',(g.user['username'],acid,comment))
-		db.commit()
-		flash('Hecho','success')
-		return redirect(url_for('todo.est_page'))
+		if  g.user['fk_rol']==3:
+			comment=request.form['comment']
+			
+	        ##Sirve
+			db,c=get_db()
+			c.execute('CALL alta_es_ac(%s,%s,%s)',(g.user['username'],acid,comment))
+			db.commit()
+			flash('Hecho','success')
+			return redirect(url_for('todo.est_page'))
+		else:
+			abort(403)
 					#SIRVE
 
 
@@ -134,14 +173,18 @@ def uploader(acid):
 @login_required
 def revisado(acid,nc):
 	if request.method == 'POST':
-		pun=request.form['sel']
-		comment=request.form['comment']
-		print("Puntuacion es: "+pun)
-		print("Comentario "+comment)
-		db,c=get_db()
-		c.execute("UPDATE es_ac SET puntuacion = %s,prof_comment=%s WHERE (fk_ac = %s AND fk_es=%s)",(pun,comment,acid,nc))
-		db.commit()
-		return redirect(url_for('todo.prof_page'))
+		if g.user['fk_rol']==1 or g.user['fk_rol']==2:
+
+			pun=request.form['sel']
+			comment=request.form['comment']
+			print("Puntuacion es: "+pun)
+			print("Comentario "+comment)
+			db,c=get_db()
+			c.execute("UPDATE es_ac SET puntuacion = %s,prof_comment=%s WHERE (fk_ac = %s AND fk_es=%s)",(pun,comment,acid,nc))
+			db.commit()
+			return redirect(url_for('todo.prof_page'))
+		else:
+			abort(404)
 
 @bp.route('/<int:acid>/<nc>/subirblob',methods=['POST'])
 @login_required
@@ -166,97 +209,96 @@ def subirblob(acid,nc):
 @bp.route('/tutor',methods=['GET','POST'])
 @login_required
 def prof_page():
-	db,c=get_db()
-	
-	c.execute("SELECT g.gru_clave 'Grupo',c.codigo 'Carrera',g.gru_id 'gc' from grupo g inner join carrera c on g.fk_carrera=c.car_id  inner join profesor p on g.fk_tutor=p.prof_id inner join user u on u.user_id=p.fkuser where u.username=%s;",(g.user['username'],))
-	activity=c.fetchall()
-	return render_template('todo/prof_page.html',activity=activity)
+	if g.user['fk_rol']==2:
+		db,c=get_db()
+		
+		c.execute("SELECT g.gru_clave 'Grupo',c.codigo 'Carrera',g.gru_id 'gc' from grupo g inner join carrera c on g.fk_carrera=c.car_id  inner join profesor p on g.fk_tutor=p.prof_id inner join user u on u.user_id=p.fkuser where u.username=%s;",(g.user['username'],))
+		activity=c.fetchall()
+		return render_template('todo/prof_page.html',activity=activity)
+	else:
+		abort(404)
 
 @bp.route('/bus_in_es')
 @login_required
 def bus_in_es():
-	dato=None
-	return render_template('todo/bus_in_es.html',dato=dato)
+	if g.user['fk_rol']==1:
+		dato=None
+		return render_template('todo/bus_in_es.html',dato=dato)
+	else:
+		abort(403)
 
 @bp.route('/bus_indiv_es',methods=['GET','POST'])
 @login_required
 def bus_indiv_es():
-	if request.method=='POST':
-		usu=request.form['usu']
-		code=request.form['code']
+	if g.user['fk_rol']==1:
+		if request.method=='POST':
+			usu=request.form['usu']
+			code=request.form['code']
 
-		db, c=get_db()
-		dato=None
-		if usu:
-			c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
-			from estudiante e
-			inner join user u on e.fkuser=u.user_id
-			inner join grupo g on e.fkgrupo=g.gru_id
-			inner join carrera c on g.fk_carrera=c.car_id
-			where u.username=%s;
-			""",(usu,))
-			dato=c.fetchone()
-			
+			db, c=get_db()
+			dato=None
+			if usu:
+				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				from estudiante e
+				inner join user u on e.fkuser=u.user_id
+				inner join grupo g on e.fkgrupo=g.gru_id
+				inner join carrera c on g.fk_carrera=c.car_id
+				where u.username=%s;
+				""",(usu,))
+				dato=c.fetchone()
+				
 
-		if code:
-			c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
-			from estudiante e
-			inner join user u on e.fkuser=u.user_id
-			inner join grupo g on e.fkgrupo=g.gru_id
-			inner join carrera c on g.fk_carrera=c.car_id
-			where e.nc=%s;
-			""",(code,))
-			dato=c.fetchone()
-				 
+			if code:
+				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				from estudiante e
+				inner join user u on e.fkuser=u.user_id
+				inner join grupo g on e.fkgrupo=g.gru_id
+				inner join carrera c on g.fk_carrera=c.car_id
+				where e.nc=%s;
+				""",(code,))
+				dato=c.fetchone()
+					 
 
-		if usu and code:
-			c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
-			from estudiante e
-			inner join user u on e.fkuser=u.user_id
-			inner join grupo g on e.fkgrupo=g.gru_id
-			inner join carrera c on g.fk_carrera=c.car_id
-			where e.nc=%s;
-			""",(code,))
-			dato=c.fetchone()
+			if usu and code:
+				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				from estudiante e
+				inner join user u on e.fkuser=u.user_id
+				inner join grupo g on e.fkgrupo=g.gru_id
+				inner join carrera c on g.fk_carrera=c.car_id
+				where e.nc=%s;
+				""",(code,))
+				dato=c.fetchone()
 
 
-		return render_template('todo/bus_in_es.html',dato=dato)
+			return render_template('todo/bus_in_es.html',dato=dato)
+	else:
+		abort(403)
 	
 
 
-@bp.route('/create',methods=['GET','POST'])
-@login_required
-def create():
-	if request.method=='POST':
-		description=request.form['description']
-		error=None
-		if not description:
-			error='Descripcion es requerido'
-		if error is not None:
-			flash(error)
-		else:
-			db,c=get_db()
-			c.execute('insert into todo(description,completed,created_by) values(%s,%s,%s)',(description,False,g.user['id']))
-			db.commit()
-			return redirect(url_for('todo.index'))
 
 @bp.route('/<gr>/new_act',methods=['GET','POST'])
 @login_required
 def nueva_actividad(gr):
-	
-	return render_template('todo/new_actividad.html',gr=gr)
+	if g.user['fk_rol']==1 or g.user['fk_rol']==2:
+		return render_template('todo/new_actividad.html',gr=gr)
+	else:
+		abort(403)
 	
 
 @bp.route('/<int:acid>/<int:gc>/revision_ac_gru',methods=['GET','POST'])
 @login_required
 def revi_gru(acid,gc):
-	if request.method=="POST":
-		db, c=get_db()
-		titulo=request.form['title']
-		c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
-		todo=c.fetchall()
-		
-		return render_template('todo/rev_gru_actividades.html',tt=titulo,todo=todo,gc=gc,acid=acid)
+	if g.user['fk_rol']==1 or g.user['fk_rol']==2:
+		if request.method=="POST":
+			db, c=get_db()
+			titulo=request.form['title']
+			c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
+			todo=c.fetchall()
+			
+			return render_template('todo/rev_gru_actividades.html',tt=titulo,todo=todo,gc=gc,acid=acid)
+	else:
+		abort(403)
 
 
 @bp.route('/<gc>/activ_pendientes',methods=['GET'])
