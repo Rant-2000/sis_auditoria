@@ -6,7 +6,7 @@ from todo.auth import login_required,solo_admin,solo_ar,solo_es,solo_prof
 from todo.db import get_db
 from werkzeug.utils import secure_filename
 import os
-
+import datetime
 from pathlib import Path,PurePath
 from io import BytesIO
 from flask_wtf.file import FileField
@@ -76,7 +76,7 @@ def act_pen():
 		c.execute(
 		"""
 		SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
-		ea.entregado 'estado' ,a.act_id 'acid' from es_ac ea
+		ea.entregado 'estado' ,a.act_id 'acid',a.visible 'vis' from es_ac ea
 		inner join actividad a on ea.fk_ac=a.act_id
 		inner join estudiante e on ea.fk_es=e.nc
 		inner join user u on e.fkuser=u.user_id
@@ -150,24 +150,44 @@ def bus_es():
 		#return render_template('todo/cons_gral_est.html',res=res)
 
 
-@bp.route('/<int:acid>/up',methods=['POST'])
+@bp.route('/<int:acid>/<name>/<gr>/<titulo>/<last>/up',methods=['POST'])
 @login_required
-def uploader(acid):
+def uploader(acid,name,gr,last,titulo):
 	if request.method == 'POST':
 		if  g.user['fk_rol']==3:
+
 			comment=request.form['comment']
 			
-	        ##Sirve
+	        
+
+			currentDateTime = datetime.datetime.now()
+			date = currentDateTime.date()
+			year = date.strftime("%Y")
+
+			app=last
+
+			f = request.files['file']
+			ruta=crea_dir(year,gr,name,app,titulo)
+
+			f.save(os.path.join(ruta, f.filename))
+			rutabd=os.path.join(ruta, f.filename)
+      		#Lo guardas en la bd
+			nruta=year+"/"+gr+"/"+name+"/"+app+"/"+titulo+"/"+secure_filename(f.filename)
+			print("Ruta para bd ",nruta)
+
+			##Sirve
 			db,c=get_db()
-			c.execute('CALL alta_es_ac(%s,%s,%s)',(g.user['username'],acid,comment))
+			c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,comment,nruta))
 			db.commit()
 			flash('Hecho','success')
 			return redirect(url_for('todo.est_page'))
 		else:
 			abort(403)
 					#SIRVE
-
-
+ALLOWED_EXTENSIONS = set(['pdf'])
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route('/<int:acid>/<nc>/revisado',methods=['POST'])
 @login_required
@@ -320,12 +340,20 @@ def actividad_novo():
 		grupo=request.form['group']
 		title=request.form['title']
 		content=request.form['content']
+		#if visible=request.form.get['visi']:
+		if request.form.get('visi'):
 
+			visible=1
+		else:
+			visible=0
+		fEntrega=request.form['ffinal']
+		
 		db, c=get_db()
 		
-		c.execute('CALL alta_actividad(%s,%s,%s,%s)',(grupo,g.user['username'],title,content))
+		c.execute('CALL alta_actividad(%s,%s,%s,%s,%s,%s)',(grupo,g.user['username'],title,content,fEntrega,visible))
 		db.commit()
-		
+		#print("Fecha fEntrega ",fEntrega," Visible ",visible)
+
 		flash("Se ha agregado la actividad",'info')
 		return redirect(url_for('todo.prof_page'))
 	
@@ -340,9 +368,14 @@ def rev_ind(nc,acid):
 		c.execute('CALL getAct_ind(%s,%s)',(acid,nc))
 		revision=c.fetchone()
 		
-		
+		ruta=revision['ruta']
+		print(ruta)
 
-		return render_template('todo/vis_cal_actividad.html',revision=revision)
+		return render_template('todo/vis_cal_actividad.html',revision=revision,ruta=ruta)
+@bp.route('/guia_pdf')
+@login_required
+def ver_guia_pdf():
+	return render_template('todo/ver_guia.html')
 
 
 @bp.route('/<int:acid>/ac_vis_full',methods=['POST'])
@@ -356,11 +389,13 @@ def ac_vis_full(acid):
 		c.execute("""
 			SELECT e.nc 'nc',ea.puntuacion 'pun',ea.prof_comment 'pc', 
 			ea.entregado 'en' ,a.act_id 'acid',e.es_nom 'nom',
-			e.es_apellidos 'app',a.titulo,a.descripcion 
+			e.es_apellidos 'app',a.titulo 'titulo',a.descripcion,
+            g.gru_clave 'gc' 
 			from es_ac ea
 			inner join actividad a on ea.fk_ac=a.act_id
 			inner join estudiante e on e.nc=ea.fk_es
 			inner join user u on e.fkuser=u.user_id
+			inner join grupo g on e.fkgrupo=g.gru_id
 			where a.act_id=%s and u.username=%s;
 			""",(acid,g.user['username']))
 		ac=c.fetchone()
@@ -406,28 +441,37 @@ def delete(id):
 	#return render_template('todo/create.html',todo=todo)
 	return ''
 
-def crea_dir(anho,gru,nom,act):
-    directorio = PurePath(Path.cwd(),'Archivos_PDF')
-    print(directorio)
-    Path(directorio).mkdir(exist_ok=True)
+def crea_dir(anho,gru,nom,app,act):
+	
+	directorio = PurePath(Path.cwd(),'todo/static/files')
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
     
-    directorio=PurePath(directorio,anho)
-    print(directorio)
-    Path(directorio).mkdir(exist_ok=True)
+    #directorio = PurePath(Path.cwd(),'Archivos_PDF')
+	#print(directorio)
+	#Path(directorio).mkdir(exist_ok=True)
 
-    directorio=PurePath(directorio,gru)
-    print(directorio)
-    Path(directorio).mkdir(exist_ok=True)
+	directorio=PurePath(directorio,anho)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
 
-    directorio=PurePath(directorio,nom)
-    print(directorio)
-    Path(directorio).mkdir(exist_ok=True)
+	directorio=PurePath(directorio,gru)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
 
-    directorio=PurePath(directorio,act)
-    print(directorio)
-    Path(directorio).mkdir(exist_ok=True)
+	directorio=PurePath(directorio,nom)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
 
-    return directorio
+	directorio=PurePath(directorio,app)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
+
+	directorio=PurePath(directorio,act)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
+
+	return directorio
 
 class UploadForm(Form):
     file = FileField()

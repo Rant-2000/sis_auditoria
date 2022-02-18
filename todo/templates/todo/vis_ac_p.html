@@ -10,6 +10,7 @@
   
 {% for activ in activity %}
 
+{% if activ['vis']==1 %}
 
 <form method="POST" action="{{ url_for('todo.ac_vis_full',acid=activ['acid']) }}" >
   <div class="mb-3 row">
@@ -31,17 +32,16 @@
 
   <div class="col-12">
     
-    <button class="btn btn-warning center" type="submit" >Abrir</button>
+    <button class="btn btn-info center" type="submit" >Abrir</button>
     
   </div>
  <br>
   <div class="progress">
-
-  <div class="progress-bar" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Suficiente</div>
+<div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Pendiente</div>
 </div>
  </form>
 <hr>
-
+{% endif %}
 
 {% endfor %}
 

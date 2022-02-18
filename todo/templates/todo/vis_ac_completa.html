@@ -92,6 +92,8 @@
 
   </textarea>
 <br>
+
+
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('todo.uploader',acid=ac['acid'],name=ac['nom'],last=ac['app'],gr=ac['gc'],titulo=ac['titulo']) }}">
  <div>
   <label for="formFileLg" class="form-label" >Elegir Archivo</label>
@@ -134,12 +136,6 @@
 {% endblock %}
 {% block script %}
 
-<script>
 
-  function filesize(elem){
-    document.cookie = `filesize=${elem.files[0].size}`
-  }
-
-</script>
 
 {% endblock %}

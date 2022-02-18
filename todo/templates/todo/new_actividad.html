@@ -7,29 +7,70 @@
 <div class="container">
 	<h1 class="display-5 text-center">{% block title %}Nueva actividad{% endblock %}</h1>
 <hr>
-	<form method="POST" action="{{ url_for('todo.actividad_novo')}}">
+<div class="container">
+  <div class="row">
+    <div class="col">
+     <form method="POST" action="{{ url_for('todo.actividad_novo')}}">
   <div class="mb-3">
     <label for="exampleInputEmail1" class="form-label">Titulo</label>
     <input type="text" class="form-control" name="title" id="title" required>
     
   </div>
   <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Descripcion</label>
-    <input type="text" class="form-control" name="content" id="content">
+    
+  <div class="form-floating">
+  <textarea class="form-control" placeholder="Describe la actividad" name="content" id="content" style="height: 100px" ></textarea>
+  <label for="floatingTextarea2">Descripcion</label>
+</div>
+
   </div>
+
   <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Grupo</label>
     <input type="text" class="form-control" name="group" id="group" readonly value="{{gr}}">
   </div>
-  <div class="mb-3 form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Volver Invisible</label>
-  </div>
- 
-  <button type="submit" class="btn btn-primary">Subir Actividad</button>
+
+  
+    </div>
+    <div class="col">
+      <div class="mb-3">
+<label for="exampleInputEmail1" class="form-label">Fecha de Cierre</label>
+      <div class="input-group date ra-date">
+      <input type="text" class="form-control" required id="ffinal" name="ffinal"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+      </div>
+      
+<div class="mb-3">
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="visi" name="visi">
+  <label class="form-check-label" for="defaultCheck1">
+    Visible
+  </label>
+
+      
+
+ <div class="mb-3">
+<button type="submit" class="btn btn-primary">Subir Actividad</button>
+</div>
+  
 </form>
 
+    </div>
+<script src="../../static/js/app.js" type="text/javascript"></script>
+
+
+
+
+
 </div>
+    </div>
+  </div>
+
+	
+
+
+
+
+
 
 
 {% endblock %}
