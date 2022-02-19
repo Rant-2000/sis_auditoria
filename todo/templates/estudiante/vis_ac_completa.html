@@ -41,14 +41,14 @@
     <label  class="form-label">Progreso</label>
 <div class="progress">
 
-  
+   
 
-    {% if ac['pun']==-1 or ac == None %}
+    {% if ac['flim'] < fe %}
 
+<div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Entrega Expirada</div>
+
+{% elif ac['pun']==-1 or ac == None %}
 <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Pendiente</div>
-
-
-
     {% elif ac['pun']==0 %}
 <div class="progress-bar progress-bar-striped bg-danger progress-bar-animated" role="progressbar" style="width: 10%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Cero</div>
 
@@ -68,6 +68,7 @@
 
     {% elif ac['pun']==5  %}
 <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">Excelente</div>
+
 
     {% endif %}
 
@@ -98,11 +99,11 @@
  <div>
   <label for="formFileLg" class="form-label" >Elegir Archivo</label>
  <input class="form-control" type="file" id="file" name="file" 
- {% if ac['en']==1 %} disabled {% endif %} oninput="filesize(this);">
+ {% if ac['en']==1 or ac['flim'] < fe %} disabled {% endif %} oninput="filesize(this);">
 </div>
 <br>
 <div class="d-grid gap-2">
-  <button type="button submit" class="btn btn-success" {% if ac['en']==1 %} disabled {% endif %}>Subir Entrega</button>
+  <button type="button submit" class="btn btn-success" {% if ac['en']==1 or ac['flim'] < fe %} disabled {% endif %} >Subir Entrega</button>
 
 </div>
   <br>
@@ -126,7 +127,6 @@
 
    
    </form>
-  
   </div>
     </div>
   </div>

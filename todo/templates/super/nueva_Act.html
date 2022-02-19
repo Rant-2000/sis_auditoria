@@ -24,10 +24,17 @@
 </div>
 
   </div>
-
+ 
   <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Grupo</label>
-    <input type="text" class="form-control" name="group" id="group" readonly value="{{gr}}">
+    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="group" name="group">
+    <option value="Selecciona">Selecciona....</option>
+    {% for grupo in grupos %}
+
+    <option name="group" id="group" >{{ grupo['gru_clave'] }}</option>
+    {% endfor %}
+    </select>
+
+   
   </div>
 
   
@@ -54,6 +61,13 @@
   
 </form>
 
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('todo.subir_plantilla')}}">
+   <div>
+  <label for="formFileLg" class="form-label" >Subir Lista de actividades XLS</label>
+ <input class="form-control" type="file" id="file" name="file">
+</div>
+<button type="submit">Subir Lista de actividades</button>
+</form>
     </div>
 <script src="../../static/js/app.js" type="text/javascript"></script>
 

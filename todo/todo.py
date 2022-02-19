@@ -1,5 +1,5 @@
 from flask import (
-	Blueprint,flash,g,redirect,render_template,request,url_for,abort,send_file
+	Blueprint,flash,g,redirect,render_template,request,url_for,abort,send_file,jsonify
 )
 from werkzeug.exceptions import abort
 from todo.auth import login_required,solo_admin,solo_ar,solo_es,solo_prof
@@ -12,6 +12,9 @@ from io import BytesIO
 from flask_wtf.file import FileField
 from wtforms import SubmitField
 from flask_wtf import Form
+import mysql.connector
+import xlrd
+import pandas as pd
 bp=Blueprint('todo',__name__)
 
 @bp.route('/')
@@ -33,7 +36,7 @@ def reg_es():
 		c.execute(
 		"SELECT * from grupo")
 		grupos=c.fetchall()
-		return render_template('auth/register.html',grupos=grupos)
+		return render_template('estudiante/register.html',grupos=grupos)
 	else:
 		return abort(403)
 @bp.route('/registro_prof')
@@ -44,14 +47,42 @@ def reg_prof():
 		c.execute(
 			"SELECT * from grupo")
 		grupos=c.fetchall()
-		return render_template('auth/register_prof.html',grupos=grupos)
+		return render_template('profesor/register_prof.html',grupos=grupos)
 	else :
+		return abort(403)
+
+@bp.route('/nuevo_grupo')
+@login_required
+def nuevo_grupo():
+	if  g.user['fk_rol']==1:
+		return render_template('grupo/new_grupo.html')
+	else:
+		return abort(403)
+
+@bp.route('/nuevo_anuncio')
+@login_required
+def nuevo_anuncio():
+	if  g.user['fk_rol']==1:
+		return render_template('anuncios/new_anuncio.html')
+	else:
+		return abort(403)
+
+@bp.route('/nueva_activi')
+@login_required
+def nueva_activi():
+	if  g.user['fk_rol']==1:
+		db,c=get_db()
+		c.execute(
+		"SELECT * from grupo")
+		grupos=c.fetchall()
+		return render_template('super/nueva_Act.html',grupos=grupos)
+	else:
 		return abort(403)
 @bp.route('/admin')
 @login_required
 def admin():
 	if  g.user['fk_rol']==1:
-		return render_template('todo/admin.html')
+		return render_template('super/admin.html')
 	else:
 
 		return abort(403)
@@ -62,7 +93,7 @@ def admin():
 @login_required
 def est_page():
 	if  g.user['fk_rol']==3:
-		return render_template('todo/est_page.html')
+		return render_template('estudiante/est_page.html')
 	else:
 
 		return abort(403)
@@ -76,14 +107,20 @@ def act_pen():
 		c.execute(
 		"""
 		SELECT  a.titulo 'titulo',a.descripcion 'descripcion',e.es_nom 'nom',e.es_apellidos 'app',
-		ea.entregado 'estado' ,a.act_id 'acid',a.visible 'vis' from es_ac ea
+		ea.entregado 'estado' ,a.act_id 'acid',a.visible 'vis',a.f_limite 'flim' from es_ac ea
 		inner join actividad a on ea.fk_ac=a.act_id
 		inner join estudiante e on ea.fk_es=e.nc
 		inner join user u on e.fkuser=u.user_id
 		where u.username=%s AND ea.entregado=0;
 		""",(g.user['username'],))
 		activity=c.fetchall()
-		return render_template('todo/vis_ac_p.html',activity=activity)
+		currentDateTime = datetime.datetime.now()
+					
+		fsin = currentDateTime.date()
+		fe=datetime.datetime(fsin.year, fsin.month, fsin.day)
+
+
+		return render_template('estudiante/vis_ac_p.html',activity=activity,fe=fe)
 	else:
 
 		return abort(403)
@@ -104,7 +141,7 @@ def act_pas():
 			where u.username=%s AND ea.entregado=%s
 			""",(g.user['username'],1))
 		activity=c.fetchall()
-		return render_template('todo/vis_ac_ter.html',activity=activity)
+		return render_template('estudiante/vis_ac_ter.html',activity=activity)
 	else:
 		abort(403)
 
@@ -116,7 +153,7 @@ def cons_gral_es():
 		c.execute(
 			"""SELECT * from carrera""")
 		grupos=c.fetchall()
-		return render_template('todo/cons_gral_est.html',grupos=grupos)
+		return render_template('super/cons_gral_est.html',grupos=grupos)
 	else:
 		abort(403)
 
@@ -149,6 +186,42 @@ def bus_es():
 			
 		#return render_template('todo/cons_gral_est.html',res=res)
 
+@bp.route('/subir_plantilla',methods=['POST'])
+@login_required
+def subir_plantilla():
+	if request.method == 'POST':
+		if  g.user['fk_rol']==2:
+			try:
+				currentDateTime = datetime.datetime.now()
+				date = currentDateTime.date()
+				year = date.strftime("%Y")
+				f = request.files['file']
+				ruta=crea_dir_docs(year,g.user['username'])
+
+				f.save(os.path.join(ruta, f.filename))
+				rutabd=os.path.join(ruta, f.filename)
+	      		#Lo guardas en la bd
+				nruta=year+"/"+g.user['username']+"/"+secure_filename(f.filename)
+				print("Ruta para n ",nruta)
+				print("Ruta para bd ",rutabd)
+				print(request.files['file'])
+				#f = request.files['file']
+				data_xls = pd.read_excel(f)
+				print(data_xls)
+				##Sirve
+				
+				#db,c=get_db()
+				#c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,comment,nruta))
+				#db.commit()
+				flash('Hecho','success')
+				return redirect(url_for('todo.prof_page'))
+			except mysql.connector.Error as err:
+				#flash('Error','danger')
+				abort(404)
+			
+		else:
+			abort(403)
+					#SIRVE
 
 @bp.route('/<int:acid>/<name>/<gr>/<titulo>/<last>/up',methods=['POST'])
 @login_required
@@ -165,22 +238,26 @@ def uploader(acid,name,gr,last,titulo):
 			year = date.strftime("%Y")
 
 			app=last
+			try:
+				f = request.files['file']
+				ruta=crea_dir(year,gr,name,app,titulo)
 
-			f = request.files['file']
-			ruta=crea_dir(year,gr,name,app,titulo)
+				f.save(os.path.join(ruta, f.filename))
+				rutabd=os.path.join(ruta, f.filename)
+	      		#Lo guardas en la bd
+				nruta=year+"/"+gr+"/"+name+"/"+app+"/"+titulo+"/"+secure_filename(f.filename)
+				print("Ruta para bd ",nruta)
 
-			f.save(os.path.join(ruta, f.filename))
-			rutabd=os.path.join(ruta, f.filename)
-      		#Lo guardas en la bd
-			nruta=year+"/"+gr+"/"+name+"/"+app+"/"+titulo+"/"+secure_filename(f.filename)
-			print("Ruta para bd ",nruta)
-
-			##Sirve
-			db,c=get_db()
-			c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,comment,nruta))
-			db.commit()
-			flash('Hecho','success')
-			return redirect(url_for('todo.est_page'))
+				##Sirve
+				db,c=get_db()
+				c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,comment,nruta))
+				db.commit()
+				flash('Hecho','success')
+				return redirect(url_for('todo.est_page'))
+			except mysql.connector.Error as err:
+				#flash('Error','danger')
+				abort(404)
+			
 		else:
 			abort(403)
 					#SIRVE
@@ -234,7 +311,7 @@ def prof_page():
 		
 		c.execute("SELECT g.gru_clave 'Grupo',c.codigo 'Carrera',g.gru_id 'gc' from grupo g inner join carrera c on g.fk_carrera=c.car_id  inner join profesor p on g.fk_tutor=p.prof_id inner join user u on u.user_id=p.fkuser where u.username=%s;",(g.user['username'],))
 		activity=c.fetchall()
-		return render_template('todo/prof_page.html',activity=activity)
+		return render_template('profesor/prof_page.html',activity=activity)
 	else:
 		abort(404)
 
@@ -290,7 +367,7 @@ def bus_indiv_es():
 				dato=c.fetchone()
 
 
-			return render_template('todo/bus_in_es.html',dato=dato)
+			return render_template('super/bus_in_es.html',dato=dato)
 	else:
 		abort(403)
 	
@@ -301,7 +378,7 @@ def bus_indiv_es():
 @login_required
 def nueva_actividad(gr):
 	if g.user['fk_rol']==1 or g.user['fk_rol']==2:
-		return render_template('todo/new_actividad.html',gr=gr)
+		return render_template('profesor/new_actividad.html',gr=gr)
 	else:
 		abort(403)
 	
@@ -316,7 +393,7 @@ def revi_gru(acid,gc):
 			c.execute('CALL get_alum_ac(%s,%s)',(gc,acid))
 			todo=c.fetchall()
 			
-			return render_template('todo/rev_gru_actividades.html',tt=titulo,todo=todo,gc=gc,acid=acid)
+			return render_template('profesor/rev_gru_actividades.html',tt=titulo,todo=todo,gc=gc,acid=acid)
 	else:
 		abort(403)
 
@@ -325,12 +402,15 @@ def revi_gru(acid,gc):
 @login_required
 def rev_actividad(gc):
 	#CALL get_Ac_grupo('rantoso',2);
-	db,c=get_db()
-	c.execute(
-		"CALL get_Ac_grupo(%s,%s);",(g.user['username'],gc))
-	activity=c.fetchall()
-	#return render_template('todo/est_page.html',activity=activity)
-	return render_template('todo/rev_actividades.html',gc=gc,activity=activity)
+	if g.user['fk_rol']==1 or g.user['fk_rol']==2:
+		db,c=get_db()
+		c.execute(
+			"CALL get_Ac_grupo(%s,%s);",(g.user['username'],gc))
+		activity=c.fetchall()
+		#return render_template('todo/est_page.html',activity=activity)
+		return render_template('profesor/rev_actividades.html',gc=gc,activity=activity)
+	else:
+		abort(403)
 
 @bp.route('/added',methods=['POST'])
 @login_required
@@ -371,11 +451,11 @@ def rev_ind(nc,acid):
 		ruta=revision['ruta']
 		print(ruta)
 
-		return render_template('todo/vis_cal_actividad.html',revision=revision,ruta=ruta)
+		return render_template('profesor/vis_cal_actividad.html',revision=revision,ruta=ruta)
 @bp.route('/guia_pdf')
 @login_required
 def ver_guia_pdf():
-	return render_template('todo/ver_guia.html')
+	return render_template('estudiante/ver_guia.html')
 
 
 @bp.route('/<int:acid>/ac_vis_full',methods=['POST'])
@@ -390,7 +470,7 @@ def ac_vis_full(acid):
 			SELECT e.nc 'nc',ea.puntuacion 'pun',ea.prof_comment 'pc', 
 			ea.entregado 'en' ,a.act_id 'acid',e.es_nom 'nom',
 			e.es_apellidos 'app',a.titulo 'titulo',a.descripcion,
-            g.gru_clave 'gc' 
+            g.gru_clave 'gc',a.f_limite 'flim' 
 			from es_ac ea
 			inner join actividad a on ea.fk_ac=a.act_id
 			inner join estudiante e on e.nc=ea.fk_es
@@ -399,7 +479,12 @@ def ac_vis_full(acid):
 			where a.act_id=%s and u.username=%s;
 			""",(acid,g.user['username']))
 		ac=c.fetchone()
-		return render_template('todo/vis_ac_completa.html',ac=ac,form=form)
+		currentDateTime = datetime.datetime.now()
+					
+		fsin = currentDateTime.date()
+		fe=datetime.datetime(fsin.year, fsin.month, fsin.day)
+
+		return render_template('estudiante/vis_ac_completa.html',ac=ac,form=form,fe=fe)
 
 
 def get_todo(id):
@@ -468,6 +553,23 @@ def crea_dir(anho,gru,nom,app,act):
 	Path(directorio).mkdir(exist_ok=True)
 
 	directorio=PurePath(directorio,act)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
+
+	return directorio
+def crea_dir_docs(anho,user):
+	
+	directorio = PurePath(Path.cwd(),'todo/static/docs')
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
+
+
+	directorio=PurePath(directorio,anho)
+	print(directorio)
+	Path(directorio).mkdir(exist_ok=True)
+
+	
+	directorio=PurePath(directorio,user)
 	print(directorio)
 	Path(directorio).mkdir(exist_ok=True)
 
