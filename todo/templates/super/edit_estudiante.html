@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+   
+<div class="container-fluid">
+	  <div class="row">
+    
+    <div class="col-6"><div class="card">
+  <div class="card-header">
+    Busqueda
+  </div>
+   <form method="POST" action="{{ url_for('todo.bus_indiv_es_mod') }}">
+  <div class="card-body">
+    <h5 class="card-title text-center display-6">Modificar Estudiante</h5>
+  
+  <div class="row mb-3">
+    <label for="code" class="col-sm-2 col-form-label">Numero de Control</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="code" name="code">
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="usu" class="col-sm-2 col-form-label">Usuario</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="usu" name="usu">
+    </div>
+  </div>
+  <div class="container d-grid gap-2 col-6 mx-auto">
+  
+  
+        <button class="btn btn-primary" type="submit button">Buscar</button>
+    
+    
+    
+ 
+</div>
+
+
+  </div>
+  </form>
+</div>
+</div>
+<div class="col-6">
+<form method="POST" action="{{ url_for('todo.upd_est') }}">
+
+<div class="card">
+	<div class="card-header">
+		
+    <legend>Datos del Estudiante</legend>
+	</div>
+
+
+	<div class="card-body">
+		
+
+ <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">N.C.</label>
+     <div class="col-sm-10">
+       <input type="text" readonly class="disabled form-control" id="nc" name="nc" value="{{ dato['nc'] }}">
+      
+    </div>
+
+    
+  </div>
+
+
+    <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Nombre</label>
+     <div class="col-sm-10">
+       <input type="text" class="form-control" id="nom" name="nom" value="{{ dato['nom'] }}">
+      
+    </div>
+
+    
+  </div>
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Apellidos</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="app" name="app" value="{{ dato['app'] }}">
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Generacion</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="gg" name="gg" value="{{ dato['gg'] }}">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Usuario</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="usu2" name="usu2" value="{{ dato['usu'] }}">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Nueva Clave</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="conpin" name="conpin">
+    </div>
+  </div>
+
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Grupo</label>
+    <div class="mb-3">
+    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="gr" name="gr">
+    <option value="Selecciona">Selecciona....</option>
+    {% for gp in grupos %}
+
+    {% if gp['gv']==dato['gc'] %}
+    <option name="gr" selected id="gr" >{{ gp['gv'] }}</option>
+
+    {% else %}
+    <option name="gr" id="gr" >{{ gp['gv'] }}</option>
+    {% endif %}
+
+    {% endfor %}
+    </select>
+
+   
+  </div>
+
+  </div>
+ <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Correo</label>
+    <div class="col-sm-10">
+      <input type="text"  class="form-control" id="cor" name="cor" value="{{ dato['cor'] }}">
+    </div>
+  </div>
+
+ <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Generacion</label>
+     <div class="col-sm-10">
+       <input type="text" class="form-control" id="nom" name="nom" value="{{ dato['gg'] }}">
+      
+    </div>
+
+    
+  </div>
+<div class="mb-3 form-check">
+    <input type="checkbox" {% if dato['visi']==0%} checked {% endif %} class="form-check-input" id="ddb" name="ddb">
+    <label class="form-check-label" for="exampleCheck1">Dado de Baja</label>
+  </div>
+ <div class="container d-grid gap-2 col-6 mx-auto">
+   <button type="submit" class="btn btn-success">Guardar Cambios</button>
+   </form> 
+  {% if dato == None%}
+  <form method="POST"  action="{{ url_for('todo.elim_es',ncc=0) }}"   >
+    {% else %} 
+<form method="POST"  action="{{ url_for('todo.elim_es',ncc=dato['nc']) }}"   >
+     {% endif %}
+
+     <button class="btn btn-danger" type="submit button">Eliminar</button>
+   </form>
+   
+ </div>
+
+  
+	</div>
+
+ 
+</div>
+
+
+
+
+
+</div>
+
+  </div>
+
+	
+	
+
+</div>
+
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import (
 	Blueprint,flash,g,redirect,render_template,request,url_for,abort,send_file,jsonify
 )
 from werkzeug.exceptions import abort
+from werkzeug.security import check_password_hash, generate_password_hash
 from todo.auth import login_required,solo_admin,solo_ar,solo_es,solo_prof
 from todo.db import get_db
 from werkzeug.utils import secure_filename
@@ -315,14 +316,151 @@ def prof_page():
 	else:
 		abort(404)
 
+@bp.route('/upd_est', methods=['GET','POST'])
+@login_required
+def upd_est():
+	if request.method=='POST':
+		if g.user['fk_rol']==1:
+			nom=request.form['nom']
+			app=request.form['app']
+			
+			if request.form['conpin']:
+				conpin=generate_password_hash(request.form['conpin'])
+			else:
+				conpin=None
+			#Para checkbox
+			ddb=request.form.get('ddb')
+			
+			if ddb== None:
+				ddb=1
+			else:
+				ddb=0
+			#print("DDB es ",ddb)
+			usu=request.form['usu2']
+			#car=request.form['car']
+			gr=request.form['gr']
+			cor=request.form['cor']
+			gg=request.form['gg']
+			ncc=request.form['nc']
+			##SQL
+			#print("Datos: ",nom,app,conpin,usu,gr,gg)
+			db, c=get_db()
+																#(enom varchar(45), epp varchar(45), uses varchar(25), uspass longtext,eug  varchar(7),gg varchar(5),ncc varchar(8),ecor varchar(40))
+			c.execute("CALL mod_estudiante(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(nom,app,usu,conpin,gr,gg,ncc,cor,ddb))
+			db.commit()
+
+			dato=None
+			flash("Actualizado Correctamente",'success')
+			return render_template('super/edit_estudiante.html',dato=dato)
+		else:
+			abort(403)
+	else:
+			abort(403)
+
+@bp.route('/modi_es')
+@login_required
+def modi_es():
+	if g.user['fk_rol']==1:
+		dato=None
+		
+		return render_template('super/edit_estudiante.html',dato=dato)
+	else:
+		abort(403)
+@bp.route('/<ncc>/elim_es', methods=['POST','GET'])
+@login_required
+def elim_es(ncc):
+	if g.user['fk_rol']==1:
+		
+		if ncc== 0:
+			dato=None
+			print("Dato vacio")
+			return render_template('super/edit_estudiante.html',dato=dato)
+		else:
+			print('NC es '+ncc)
+			dato=None
+			#SQL
+			db, c=get_db()
+			c.execute("CALL del_est(%s)",(ncc,))
+			db.commit()
+			return render_template('super/edit_estudiante.html',dato=dato)
+		
+		
+		#{{ url_for('todo.elim_es',ncc=dato['nc']) }}
+		return render_template('super/edit_estudiante.html',dato=dato)
+	else:
+		abort(403)
+@bp.route('/bus_indiv_mod',methods=['GET','POST'])
+@login_required
+def bus_indiv_es_mod():
+	if g.user['fk_rol']==1:
+		if request.method=='POST':
+			usu=request.form['usu']
+			code=request.form['code']
+
+			db, c=get_db()
+			dato=None
+			grupos=None
+			
+			
+			
+
+			if usu:
+				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor',e.es_generacion 'gg',e.visible 'visi'
+				from estudiante e
+				inner join user u on e.fkuser=u.user_id
+				inner join grupo g on e.fkgrupo=g.gru_id
+				inner join carrera c on g.fk_carrera=c.car_id
+				where u.username=%s;
+				""",(usu,))
+				dato=c.fetchone()
+				
+				c.execute("SELECT gru_clave 'gv' from grupo")
+				grupos=c.fetchall()
+
+			
+
+			if code:
+				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				,e.es_generacion 'gg',e.visible 'visi'
+				from estudiante e
+				inner join user u on e.fkuser=u.user_id
+				inner join grupo g on e.fkgrupo=g.gru_id
+				inner join carrera c on g.fk_carrera=c.car_id
+				where e.nc=%s;
+				""",(code,))
+				dato=c.fetchone()
+				c.execute("SELECT gru_clave 'gv' from grupo")
+				grupos=c.fetchall()
+			
+			if usu and code:
+				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				,e.es_generacion 'gg',e.visible 'visi'
+				from estudiante e
+				inner join user u on e.fkuser=u.user_id
+				inner join grupo g on e.fkgrupo=g.gru_id
+				inner join carrera c on g.fk_carrera=c.car_id
+				where e.nc=%s;
+				""",(code,))
+				dato=c.fetchone()
+				c.execute("SELECT gru_clave 'gv' from grupo")
+				grupos=c.fetchall()
+				
+				#passw=check_password_hash(user['password'],password)
+
+
+
+			return render_template('super/edit_estudiante.html',dato=dato,grupos=grupos)
+	else:
+		abort(403)
+
 @bp.route('/bus_in_es')
 @login_required
 def bus_in_es():
 	if g.user['fk_rol']==1:
 		dato=None
-		return render_template('todo/bus_in_es.html',dato=dato)
+		return render_template('super/bus_in_es.html',dato=dato)
 	else:
-		abort(403)
+		abort(403)	
 
 @bp.route('/bus_indiv_es',methods=['GET','POST'])
 @login_required
