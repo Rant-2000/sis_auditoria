@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block header %}
+	
+{% endblock %}
+
+{% block content %}
+	
+		
+<div class="table-responsive container-fluid">
+
+
+	<h1 class="display-5 text-center">{% block title %}Consulta Motivos{% endblock %}</h1>
+	<div class="container">
+  <div class="row">
+    
+    
+  </div>
+</div>
+
+  
+	
+		  <table class="table table-striped table-hover">
+		    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Motivo</th>
+    </tr>
+  </thead>
+		{% for actividad in r %}
+
+		
+  <tbody>
+  
+    <tr>
+     <form method="POST" action="{{ url_for('todo.edit_mot',idm=actividad['idmotivo'],mot=actividad['descripcion']) }}">
+      <td scope="row">{{actividad['idmotivo']}}</td>
+      <td scope="row">{{actividad['descripcion']}}</td>
+      
+      <td>
+      	<input type="submit" class="submit btn btn-info" value="Editar">
+      </td>
+      </form>
+    </tr>
+  
+  
+		
+		{% if not loop.last %}
+	
+	{% endif %}
+	{% endfor %}
+	</tbody>
+		  </table>
+		</div>
+{% endblock %}

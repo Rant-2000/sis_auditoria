@@ -32,7 +32,7 @@ def index():
 def reg_es():
 	print('Entra al method')
 	if  g.user['fk_rol']==1:
-		print('Entra al if reg es')
+		
 		db,c=get_db()
 		c.execute(
 		"SELECT * from grupo")
@@ -40,6 +40,82 @@ def reg_es():
 		return render_template('estudiante/register.html',grupos=grupos)
 	else:
 		return abort(403)
+
+@bp.route('/consulta_motivos')
+@login_required
+def cons_mot():
+	print('Entra al method')
+	if  g.user['fk_rol']==1:
+		db,c=get_db()
+		c.execute(
+		"SELECT * from motivo")
+		r=c.fetchall()
+		return render_template('super/cons_motivos.html',r=r)
+	else:
+		return abort(403)
+
+@bp.route('/registro_motivo')
+@login_required
+def reg_mot():
+	print('Entra al method')
+	if  g.user['fk_rol']==1:
+		return render_template('super/new_motivo.html')
+	else:
+		return abort(403)
+
+@bp.route('/mot_agregado',methods=['GET','POST'])
+@login_required
+def motivo_agregado():
+	
+	if  g.user['fk_rol']==1:
+		if request.method == 'POST':
+			
+			des=request.form['content']
+			db,c=get_db()
+			c.execute(
+			"INSERT INTO motivo(descripcion) values(%s);",(des,))
+			db.commit()
+			flash("Agregado Exitosamente!",'success')
+		else:
+			flash("ERROR",'warning')
+		return render_template('super/new_motivo.html')
+	else:
+		return abort(403)
+@bp.route('/<int:idm>/<mot>/edit_mot',methods=['GET','POST'])
+@login_required
+def edit_mot(idm,mot):
+	
+	if  g.user['fk_rol']==1:
+		if request.method == 'POST':
+			
+			return render_template('super/edit_motivo.html',mot=mot,idm=idm)
+		else:
+			flash("ERROR",'warning')
+		return render_template('super/cons_mot.html')
+	else:
+		return abort(403)
+@bp.route('/<int:idmot>/motivo_modificado',methods=['GET','POST'])
+@login_required
+def motivo_modificado(idmot):
+	
+	if  g.user['fk_rol']==1:
+		if request.method == 'POST':
+			#SQL
+			des=request.form['content']
+			db,c=get_db()
+			c.execute( "UPDATE motivo set descripcion=%s where idmotivo=%s",(des,idmot))
+			db.commit()
+
+
+			##
+			flash("Modificado Correctamente",'success')
+			return render_template('super/admin.html')
+		else:
+			flash("ERROR",'warning')
+		return render_template('super/cons_mot.html')
+	else:
+		return abort(403)
+
 @bp.route('/registro_prof')
 @login_required
 def reg_prof():

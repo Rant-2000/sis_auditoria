@@ -182,6 +182,24 @@
           </ul>
         </li>
 
+         <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="gr" name="gr" >
+            Motivos
+          </a>
+
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+             <form method="POST" >
+             
+            <li><a class="dropdown-item" href="{{url_for('todo.reg_mot')}}">Nuevo</a></li>
+            <li><a class="dropdown-item" href="#">Eliminar</a></li>
+            <li><a class="dropdown-item" href="{{url_for('todo.bus_in_p')}}">Buscar</a></li>
+            <li><a class="dropdown-item" href="{{url_for('todo.modi_p')}}">Editar</a></li>
+            <li><a class="dropdown-item" href="{{url_for('todo.cons_mot')}}">Consultar</a></li>
+            </form>
+            
+          </ul>
+        </li>
+
      
        {% endif %}
 

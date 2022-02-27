@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block header %}
+	
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1 class="display-5 text-center">{% block title %}Editar Motivo de Baja{% endblock %}</h1>
+<hr>
+<div class="container">
+  <div class="row">
+    <div class="col">
+     <form method="POST" action="{{ url_for('todo.motivo_modificado',idmot=idm)}}">
+ 
+  <div class="mb-3">
+    
+  <div class="form-floating">
+  <textarea class="form-control" placeholder="Describe la actividad" name="content" id="content" style="height: 100px" >{{ mot }}</textarea>
+  <label for="floatingTextarea2">Descripcion</label>
+</div>
+
+  </div>
+ 
+  </div>
+    <div class="col">
+      
+      
+
+  
+      
+
+ <div class="mb-3">
+<button type="submit" class="btn btn-primary">Editar Motivo</button>
+</div>
+  
+</form>
+
+    </div>
+
+
+
+
+
+
+</div>
+    </div>
+  </div>
+
+	
+
+
+
+
+
+
+
+{% endblock %}
