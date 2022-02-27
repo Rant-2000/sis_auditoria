@@ -18,24 +18,21 @@
     Anuncios
   </div>
 
-  <div class="card-body">
-  	<img src="https://picsum.photos/350/150" class="card-img-top" alt="...">
-    <h5 class="card-title">Alguna beca</h5>
-    <p class="card-text">Requisitos</p>
+ {% for anu in anun %}
+ <div class="card-body">
+    <img src="https://picsum.photos/350/150" class="card-img-top" alt="...">
+    <h5 class="card-title">{{ anu['titulo'] }}</h5>
+    <p class="card-text">{{ anu['contenido'] }}</p>
     <a href="#" class="btn btn-primary">Ver mas</a>
   </div>
   <div class="card-footer text-muted">
-    Fecha de subida
+    {{ anu['fecha'] }}
   </div>
-  <div class="card-body">
-  	<img src="https://picsum.photos/300/100" class="card-img-top" alt="...">
-    <h5 class="card-title">Algun aviso</h5>
-    <p class="card-text">Descripcion</p>
-    <a href="#" class="btn btn-primary">Ver mas</a>
-  </div>
-  <div class="card-footer text-muted">
-    Fecha de subida
-  </div>
+
+
+ {% endfor %}
+ 
+ 
 </div>
 	
 

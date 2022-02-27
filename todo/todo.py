@@ -79,6 +79,19 @@ def nueva_activi():
 		return render_template('super/nueva_Act.html',grupos=grupos)
 	else:
 		return abort(403)
+
+@bp.route('/new_anun')
+@login_required
+def new_anun():
+	if  g.user['fk_rol']==1:
+		db,c=get_db()
+		c.execute(
+		"SELECT * from grupo")
+		grupos=c.fetchall()
+		return render_template('super/new_anuncio.html',grupos=grupos)
+	else:
+		return abort(403)
+
 @bp.route('/admin')
 @login_required
 def admin():
@@ -94,7 +107,16 @@ def admin():
 @login_required
 def est_page():
 	if  g.user['fk_rol']==3:
-		return render_template('estudiante/est_page.html')
+		db,c=get_db()
+		c.execute("""
+			SELECT a.* FROM anuncio a
+			inner join grupo g on a.fk_grupo=g.gru_id
+			inner join estudiante e on e.fkgrupo=g.gru_id
+			inner join user u on u.user_id=e.fkuser
+			where u.username=%s;
+			""",(g.user['username'],))
+		anun=c.fetchall()
+		return render_template('estudiante/est_page.html',anun=anun)
 	else:
 
 		return abort(403)
@@ -357,6 +379,40 @@ def upd_est():
 	else:
 			abort(403)
 
+@bp.route('/upd_pr', methods=['GET','POST'])
+@login_required
+def upd_pr():
+	if request.method=='POST':
+		if g.user['fk_rol']==1:
+			nom=request.form['nom']
+			app=request.form['app']
+			
+			if request.form['conpin']:
+				conpin=generate_password_hash(request.form['conpin'])
+			else:
+				conpin=None
+			#Para checkbox
+			
+			usu=request.form['usu2']
+			
+			cor=request.form['cor']
+		
+			ncc=request.form['nc']
+			##SQL
+			#print("Datos: ",nom,app,conpin,usu,gr,gg)
+			db, c=get_db()
+										#(nnom varchar(45),napp varchar(45),ncor varchar(40),nuser varchar(25),ncon longtext, vnc varchar(8))
+			c.execute("CALL mod_profesor(%s,%s,%s,%s,%s,%s)",(nom,app,cor,usu,conpin,ncc))
+			db.commit()
+
+			dato=None
+			flash("Actualizado Correctamente",'success')
+			return render_template('super/edit_profesor.html',dato=dato)
+		else:
+			abort(403)
+	else:
+			abort(403)
+
 @bp.route('/modi_es')
 @login_required
 def modi_es():
@@ -366,6 +422,16 @@ def modi_es():
 		return render_template('super/edit_estudiante.html',dato=dato)
 	else:
 		abort(403)
+@bp.route('/modi_p')
+@login_required
+def modi_p():
+	if g.user['fk_rol']==1:
+		dato=None
+		
+		return render_template('super/edit_profesor.html',dato=dato)
+	else:
+		abort(403)
+
 @bp.route('/<ncc>/elim_es', methods=['POST','GET'])
 @login_required
 def elim_es(ncc):
@@ -452,7 +518,29 @@ def bus_indiv_es_mod():
 			return render_template('super/edit_estudiante.html',dato=dato,grupos=grupos)
 	else:
 		abort(403)
+@bp.route('/bus_mod_p',methods=['GET','POST'])
+@login_required
+def bus_mod_p():
+	if g.user['fk_rol']==1:
+		if request.method=='POST':
+			
+			code=request.form['code']
 
+			
+			dato=None
+			if code:
+				db, c=get_db()
+				c.execute("""
+					CALL bus_in_p(%s)
+				""",(code,))
+				dato=c.fetchone()
+			else:
+				flash("Debes de ingresar un dato")
+			
+
+			return render_template('super/edit_profesor.html',dato=dato)
+	else:
+		abort(403)
 @bp.route('/bus_in_es')
 @login_required
 def bus_in_es():
@@ -461,7 +549,14 @@ def bus_in_es():
 		return render_template('super/bus_in_es.html',dato=dato)
 	else:
 		abort(403)	
-
+@bp.route('/bus_in_p')
+@login_required
+def bus_in_p():
+	if g.user['fk_rol']==1:
+		dato=None
+		return render_template('super/bus_in_prof.html',dato=dato)
+	else:
+		abort(403)	
 @bp.route('/bus_indiv_es',methods=['GET','POST'])
 @login_required
 def bus_indiv_es():
@@ -510,7 +605,32 @@ def bus_indiv_es():
 		abort(403)
 	
 
+@bp.route('/bus_indiv_prof',methods=['GET','POST'])
+@login_required
+def bus_indiv_prof():
+	if g.user['fk_rol']==1:
+		if request.method=='POST':
+			
+			code=request.form['code']
 
+			db, c=get_db()
+			dato=None
+	
+
+			if code:
+				c.execute("""
+					CALL bus_in_p(%s)
+				""",(code,))
+				dato=c.fetchone()
+			else:
+				flash("Debes agregar un numero de control")
+					 
+
+
+
+			return render_template('super/bus_in_prof.html',dato=dato)
+	else:
+		abort(403)
 
 @bp.route('/<gr>/new_act',methods=['GET','POST'])
 @login_required
@@ -574,7 +694,32 @@ def actividad_novo():
 
 		flash("Se ha agregado la actividad",'info')
 		return redirect(url_for('todo.prof_page'))
-	
+
+@bp.route('/anuncio_agregado',methods=['POST','GET'])
+@login_required
+def anuncio_agregado():
+	if request.method=='POST':
+		#intentar declarar el grupo de otra manera
+		grupo=request.form['group']
+		title=request.form['title']
+		content=request.form['content']
+		#if visible=request.form.get['visi']:
+		if request.form.get('visi'):
+
+			visible=1
+		else:
+			visible=0
+		
+		
+		db, c=get_db()
+								#(nt varchar(40), nd mediumtext, vis tinyint(1), gr varchar(7))
+		c.execute('CALL new_anuncio(%s,%s,%s,%s)',(title,content,visible,grupo))
+		db.commit()
+		#print("Fecha fEntrega ",fEntrega," Visible ",visible)
+
+		flash("Se ha agregado el anuncio",'info')
+		return redirect(url_for('todo.new_anun'))
+
 @bp.route('/<nc>/<int:acid>/rev_ind',methods=['POST'])
 @login_required
 def rev_ind(nc,acid):

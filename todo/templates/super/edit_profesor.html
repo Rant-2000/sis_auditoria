@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+   
+<div class="container-fluid">
+	  <div class="row">
+    
+    <div class="col-6"><div class="card">
+  <div class="card-header">
+    Busqueda
+  </div>
+   <form method="POST" action="{{ url_for('todo.bus_mod_p') }}">
+  <div class="card-body">
+    <h5 class="card-title text-center display-6">Modificar Profesor</h5>
+  
+  <div class="row mb-3">
+    <label for="code" class="col-sm-2 col-form-label">Numero de Control</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="code" name="code">
+    </div>
+  </div>
+  
+  <div class="container d-grid gap-2 col-6 mx-auto">
+  
+  
+        <button class="btn btn-primary" type="submit button">Buscar</button>
+    
+    
+    
+ 
+</div>
+
+
+  </div>
+  </form>
+</div>
+</div>
+<div class="col-6">
+<form method="POST" action="{{ url_for('todo.upd_pr') }}">
+
+<div class="card">
+	<div class="card-header">
+		
+    <legend>Datos del Profesor</legend>
+	</div>
+
+
+	<div class="card-body">
+		
+
+ <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">N.C.</label>
+     <div class="col-sm-10">
+       <input type="text" readonly class="disabled form-control" id="nc" name="nc" value="{{ dato['pnc'] }}">
+      
+    </div>
+
+    
+  </div>
+
+
+    <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Nombre</label>
+     <div class="col-sm-10">
+       <input type="text" class="form-control" id="nom" name="nom" value="{{ dato['np'] }}">
+      
+    </div>
+
+    
+  </div>
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Apellidos</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="app" name="app" value="{{ dato['pap'] }}">
+    </div>
+  </div>
+
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Usuario</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="usu2" name="usu2" value="{{ dato['pu'] }}">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Nueva Clave</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="conpin" name="conpin">
+    </div>
+  </div>
+
+
+ <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Correo</label>
+    <div class="col-sm-10">
+      <input type="text"  class="form-control" id="cor" name="cor" value="{{ dato['pc'] }}">
+    </div>
+  </div>
+
+
+ <div class="container d-grid gap-2 col-6 mx-auto">
+   <button type="submit" class="btn btn-success">Guardar Cambios</button>
+   </form> 
+  
+
+
+  {% if dato == None%}
+  <form method="POST"  action="{{ url_for('todo.elim_es',ncc=0) }}"   >
+    {% else %} 
+<form method="POST"  action="{{ url_for('todo.elim_es',ncc=dato['nc']) }}"   >
+     {% endif %}
+
+     <button class="btn btn-danger" type="submit">Eliminar</button>
+   </form>
+   
+ </div>
+
+  
+	</div>
+
+ 
+</div>
+
+
+
+
+
+</div>
+
+  </div>
+
+	
+	
+
+</div>
+
+{% endblock %}

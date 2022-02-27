@@ -12,7 +12,7 @@
   <div class="card-header">
     Busqueda
   </div>
-   <form method="POST" action="{{ url_for('todo.bus_indiv_es') }}">
+   <form method="POST" action="{{ url_for('todo.bus_indiv_prof') }}">
   <div class="card-body">
     <h5 class="card-title text-center display-6">Busqueda Individual Profesor</h5>
   
@@ -22,12 +22,7 @@
       <input type="text" class="form-control" id="code" name="code">
     </div>
   </div>
-  <div class="row mb-3">
-    <label for="usu" class="col-sm-2 col-form-label">Usuario</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control" id="usu" name="usu">
-    </div>
-  </div>
+
  <button type="submit" class="center btn btn-warning btn-lg btn-block">Buscar</button>
 
   </div>
@@ -40,7 +35,7 @@
 <div class="card">
 	<div class="card-header">
 		
-    <legend>Datos del Estudiante</legend>
+    <legend>Datos del Profesor</legend>
 	</div>
 
 	<div class="card-body">
@@ -48,50 +43,35 @@
     <div class="mb-3 row">
     <label for="staticEmail" class="col-sm-2 col-form-label">Nombre</label>
     <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['nom'] }}">
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['np'] }}">
     </div>
   </div>
 
   <div class="mb-3 row">
     <label for="staticEmail" class="col-sm-2 col-form-label">Apellidos</label>
     <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['app'] }}">
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['pap'] }}">
     </div>
   </div>
 
   <div class="mb-3 row">
     <label for="staticEmail" class="col-sm-2 col-form-label">N.C.</label>
     <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['nc'] }}">
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['pnc'] }}">
     </div>
   </div>
 
   <div class="mb-3 row">
     <label for="staticEmail" class="col-sm-2 col-form-label">Usuario</label>
     <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['usu'] }}">
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['pu'] }}">
     </div>
   </div>
 
-  <div class="mb-3 row">
-    <label for="staticEmail" class="col-sm-2 col-form-label">Grupo</label>
-    <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['gc'] }}">
-    </div>
-  </div>
-
-
-
-  <div class="mb-3 row">
-    <label for="staticEmail" class="col-sm-2 col-form-label">Carrera</label>
-    <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['car'] }}">
-    </div>
-  </div>
   <div class="mb-3 row">
     <label for="staticEmail" class="col-sm-2 col-form-label">Correo</label>
     <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['cor'] }}">
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ dato['pc'] }}">
     </div>
   </div>
 
