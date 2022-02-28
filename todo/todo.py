@@ -512,18 +512,21 @@ def modi_p():
 @login_required
 def elim_es(ncc):
 	if g.user['fk_rol']==1:
-		
-		if ncc== 0:
+		motiv=request.form['motiv'];
+		if ncc== 0 or len(motiv)<1 or motiv=='Selecciona':
 			dato=None
-			print("Dato vacio")
+			#print("Dato vacio")
+			flash("Por favor rellena Correctamente los campos",'warning')
 			return render_template('super/edit_estudiante.html',dato=dato)
 		else:
 			print('NC es '+ncc)
 			dato=None
 			#SQL
 			db, c=get_db()
-			c.execute("CALL del_est(%s)",(ncc,))
+			c.execute("CALL del_est(%s,%s)",(ncc,motiv))
 			db.commit()
+			print("motivo ",motiv)
+			flash("Baja exitosa",'info')
 			return render_template('super/edit_estudiante.html',dato=dato)
 		
 		
@@ -542,7 +545,7 @@ def bus_indiv_es_mod():
 			db, c=get_db()
 			dato=None
 			grupos=None
-			
+			motivos=None
 			
 			
 
@@ -558,7 +561,8 @@ def bus_indiv_es_mod():
 				
 				c.execute("SELECT gru_clave 'gv' from grupo")
 				grupos=c.fetchall()
-
+				c.execute("SELECT * from motivo")
+				motivos=c.fetchall()
 			
 
 			if code:
@@ -573,7 +577,8 @@ def bus_indiv_es_mod():
 				dato=c.fetchone()
 				c.execute("SELECT gru_clave 'gv' from grupo")
 				grupos=c.fetchall()
-			
+				c.execute("SELECT * from motivo")
+				motivos=c.fetchall()
 			if usu and code:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
 				,e.es_generacion 'gg',e.visible 'visi'
@@ -587,11 +592,15 @@ def bus_indiv_es_mod():
 				c.execute("SELECT gru_clave 'gv' from grupo")
 				grupos=c.fetchall()
 				
+				c.execute("SELECT * from motivo")
+				motivos=c.fetchall()
+
+
 				#passw=check_password_hash(user['password'],password)
 
 
 
-			return render_template('super/edit_estudiante.html',dato=dato,grupos=grupos)
+			return render_template('super/edit_estudiante.html',dato=dato,grupos=grupos,motivos=motivos)
 	else:
 		abort(403)
 @bp.route('/bus_mod_p',methods=['GET','POST'])

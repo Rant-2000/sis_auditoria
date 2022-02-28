@@ -19,11 +19,24 @@
   </div>
 
  {% for anu in anun %}
+
+
  <div class="card-body">
     <img src="https://picsum.photos/350/150" class="card-img-top" alt="...">
     <h5 class="card-title">{{ anu['titulo'] }}</h5>
-    <p class="card-text">{{ anu['contenido'] }}</p>
-    <a href="#" class="btn btn-primary">Ver mas</a>
+   <p class="card-text">
+  <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Ver más
+  </a>
+ 
+</p>
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+   {{ anu['contenido'] }}
+  </div>
+</div>
+
+    
   </div>
   <div class="card-footer text-muted">
     {{ anu['fecha'] }}
@@ -37,5 +50,8 @@
 	
 
 </ul>
+
+
+
 
 {% endblock %}

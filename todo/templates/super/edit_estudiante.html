@@ -150,12 +150,56 @@
    <button type="submit" class="btn btn-success">Guardar Cambios</button>
    </form> 
   {% if dato == None%}
-  <form method="POST"  action="{{ url_for('todo.elim_es',ncc=0) }}"   >
+  <form method="POST"  action="{{ url_for('todo.elim_es',ncc=dato['nc']) }}"   >
     {% else %} 
 <form method="POST"  action="{{ url_for('todo.elim_es',ncc=dato['nc']) }}"   >
      {% endif %}
 
-     <button class="btn btn-danger" type="submit button">Eliminar</button>
+     
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Dar de baja</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Selecciona el motivo de baja escolar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Motivo</label>
+    <div class="mb-3">
+    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="motiv" name="motiv">
+    <option value="Selecciona">Selecciona</option>
+    {% for gp in motivos %}
+
+    <option name="motiv" id="motiv" >{{ gp['descripcion'] }}</option>
+
+    {% endfor %}
+    </select>
+
+   
+  </div>
+
+  </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit button" class="btn btn-primary">Dar de baja</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
    </form>
    
  </div>
