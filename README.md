@@ -8,7 +8,7 @@ Modulo estadistico para analizar las bajas de estudiantes
 
 ![Employee data](https://ibb.co/Chy8N4F "Employee Data title")
 
-
+<img src="/repository/Capturas/blubug.png" alt="Employee data" title="Employee Data title">
 
 
 https://ibb.co/VJ5tNF6
