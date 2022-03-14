@@ -338,20 +338,36 @@ def uploader(acid,name,gr,last,titulo):
 
 			app=last
 			try:
+				#f = request.files['file']
+				#Obtener tamaño
+
+
 				f = request.files['file']
-				ruta=crea_dir(year,gr,name,app,titulo)
+				f.seek(0, os.SEEK_END)
+				file_length = f.tell()
+				print("Tamaño ",file_length)
+				if file_length>5242000:
+					flash("Archivo demasiado grande, elige otro",'warning')
 
-				f.save(os.path.join(ruta, f.filename))
-				rutabd=os.path.join(ruta, f.filename)
-	      		#Lo guardas en la bd
-				nruta=year+"/"+gr+"/"+name+"/"+app+"/"+titulo+"/"+secure_filename(f.filename)
-				print("Ruta para bd ",nruta)
+				else:
+					#Para restaurar el archivo
+					f.seek(0, 0)
+					print("subir")	
+				#
 
-				##Sirve
-				db,c=get_db()
-				c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,comment,nruta))
-				db.commit()
-				flash('Hecho','success')
+					ruta=crea_dir(year,gr,name,app,titulo)
+
+					f.save(os.path.join(ruta, f.filename))
+					rutabd=os.path.join(ruta, f.filename)
+		      		#Lo guardas en la bd
+					nruta=year+"/"+gr+"/"+name+"/"+app+"/"+titulo+"/"+secure_filename(f.filename)
+					print("Ruta para bd ",nruta)
+
+					##Sirve
+					db,c=get_db()
+					c.execute('CALL alta_es_ac(%s,%s,%s,%s)',(g.user['username'],acid,comment,nruta))
+					db.commit()
+					flash('Hecho','success')
 				return redirect(url_for('todo.est_page'))
 			except mysql.connector.Error as err:
 				#flash('Error','danger')
@@ -551,27 +567,31 @@ def bus_indiv_es_mod():
 
 			if usu:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor',e.es_generacion 'gg',e.visible 'visi'
+				,m.des 'des'
 				from estudiante e
 				inner join user u on e.fkuser=u.user_id
 				inner join grupo g on e.fkgrupo=g.gru_id
 				inner join carrera c on g.fk_carrera=c.car_id
+				inner join modalidad m on g.fk_mod=m.idmodalidad
 				where u.username=%s;
 				""",(usu,))
 				dato=c.fetchone()
 				
 				c.execute("SELECT gru_clave 'gv' from grupo")
 				grupos=c.fetchall()
+				
 				c.execute("SELECT * from motivo")
 				motivos=c.fetchall()
 			
 
 			if code:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
-				,e.es_generacion 'gg',e.visible 'visi'
+				,e.es_generacion 'gg',e.visible 'visi',m.des 'des'
 				from estudiante e
 				inner join user u on e.fkuser=u.user_id
 				inner join grupo g on e.fkgrupo=g.gru_id
 				inner join carrera c on g.fk_carrera=c.car_id
+				inner join modalidad m on g.fk_mod=m.idmodalidad
 				where e.nc=%s;
 				""",(code,))
 				dato=c.fetchone()
@@ -581,11 +601,12 @@ def bus_indiv_es_mod():
 				motivos=c.fetchall()
 			if usu and code:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
-				,e.es_generacion 'gg',e.visible 'visi'
+				,e.es_generacion 'gg',e.visible 'visi',m.des 'des'
 				from estudiante e
 				inner join user u on e.fkuser=u.user_id
 				inner join grupo g on e.fkgrupo=g.gru_id
 				inner join carrera c on g.fk_carrera=c.car_id
+				inner join modalidad m on g.fk_mod=m.idmodalidad
 				where e.nc=%s;
 				""",(code,))
 				dato=c.fetchone()
@@ -654,10 +675,12 @@ def bus_indiv_es():
 			dato=None
 			if usu:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				,m.des 'des'
 				from estudiante e
 				inner join user u on e.fkuser=u.user_id
 				inner join grupo g on e.fkgrupo=g.gru_id
 				inner join carrera c on g.fk_carrera=c.car_id
+				inner join modalidad m on g.fk_mod=m.idmodalidad
 				where u.username=%s;
 				""",(usu,))
 				dato=c.fetchone()
@@ -665,10 +688,12 @@ def bus_indiv_es():
 
 			if code:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				,m.des 'des'
 				from estudiante e
 				inner join user u on e.fkuser=u.user_id
 				inner join grupo g on e.fkgrupo=g.gru_id
 				inner join carrera c on g.fk_carrera=c.car_id
+				inner join modalidad m on g.fk_mod=m.idmodalidad
 				where e.nc=%s;
 				""",(code,))
 				dato=c.fetchone()
@@ -676,10 +701,12 @@ def bus_indiv_es():
 
 			if usu and code:
 				c.execute("""SELECT e.nc,e.es_nom 'nom',e.es_apellidos 'app',u.username 'usu',g.gru_clave 'gc',c.titulo 'car',e.es_correo 'cor'
+				,m.des 'des'
 				from estudiante e
 				inner join user u on e.fkuser=u.user_id
 				inner join grupo g on e.fkgrupo=g.gru_id
 				inner join carrera c on g.fk_carrera=c.car_id
+				inner join modalidad m on g.fk_mod=m.idmodalidad
 				where e.nc=%s;
 				""",(code,))
 				dato=c.fetchone()

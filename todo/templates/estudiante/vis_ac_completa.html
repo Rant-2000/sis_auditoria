@@ -94,12 +94,36 @@
   </textarea>
 <br>
 
+<script>
+    Filevalidation = () => {
+        const fi = document.getElementById('file');
+        // Check if any file is selected.
+        if (fi.files.length > 0) {
+            for (const i = 0; i <= fi.files.length - 1; i++) {
+  
+                const fsize = fi.files.item(i).size;
+                const file = Math.round((fsize / 1024));
+                // The size of the file.
+                if (file >= 5096) {
+                    alert(
+                      "Archivo muy grande, selecciona un archivo menor a 5mb");
+                } else if (file < 100) {
+                    alert(
+                      "Archivo demasiado pequeño, selecciona otro");
+                } else {
+                    document.getElementById('size').innerHTML = '<b>'
+                    + file + '</b> KB';
+                }
+            }
+        }
+    }
+</script>
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('todo.uploader',acid=ac['acid'],name=ac['nom'],last=ac['app'],gr=ac['gc'],titulo=ac['titulo']) }}">
  <div>
   <label for="formFileLg" class="form-label" >Elegir Archivo</label>
  <input class="form-control" type="file" id="file" name="file" 
- {% if ac['en']==1 or ac['flim'] < fe %} disabled {% endif %} oninput="filesize(this);">
+ {% if ac['en']==1 or ac['flim'] < fe %} disabled {% endif %} onchange="Filevalidation()">
 </div>
 <br>
 <div class="d-grid gap-2">

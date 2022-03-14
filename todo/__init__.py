@@ -7,13 +7,13 @@ def create_app():
 	app=Flask(__name__)
 	#app.run(host="localhost", port=3306, debug=True)
 	app.config.from_mapping(
+			#MAX_CONTENT_LENGTH="MAX_CONTENT_LENGTH",
 			SECRET_KEY="llavesita",
 			DATABASE_HOST=os.environ.get("FLASK_DATABASE_HOST"),
 			DATABASE_PASSWORD=os.environ.get("FLASK_DATABASE_PASSWORD"),
 			DATABASE_USER=os.environ.get("FLASK_DATABASE_USER"),
 			DATABASE=os.environ.get("FLASK_DATABASE"),
-			UPLOAD_FOLDER=os.environ.get("UPLOAD_FOLDER"),
-			MAX_CONTENT_PATH=os.environ.get("MAX_CONTENT_PATH")		
+			UPLOAD_FOLDER=os.environ.get("UPLOAD_FOLDER")		
 		#	UPLOAD_FOLDER=os.environ.get("UPLOAD_FOLDER")
 		#	PUERTO=os.environ.get("FLASK_RUN_PORT")			
 	)
