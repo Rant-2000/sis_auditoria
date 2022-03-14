@@ -6,6 +6,18 @@ Sistema que pretende dar solucion a las actividades de tutorias a los grupos del
 Modulo estadistico para analizar las bajas de estudiantes
 
 
+![Employee data](https://ibb.co/Chy8N4F "Employee Data title")
 
-![Logo](https://diee.net/wp-content/uploads/2020/06/Logo-TecNM-2017-768x473.png)
+
+
+
+https://ibb.co/VJ5tNF6
+https://ibb.co/6vMhVMK
+https://ibb.co/Sr7LYPN
+https://ibb.co/LvN0R5z
+https://ibb.co/kKmGCYG
+https://ibb.co/dGpg5n6
+https://ibb.co/1R92Csf
+https://ibb.co/GTTv6DL
+https://ibb.co/y60bgMx
 
