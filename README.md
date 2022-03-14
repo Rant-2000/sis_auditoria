@@ -5,7 +5,7 @@ Sistema de auditoria a grupos universitarios, prototipo TECNM
 Sistema que pretende dar solucion a las actividades de tutorias a los grupos del TECNM Campus Comitancillo
 Modulo estadistico para analizar las bajas de estudiantes
 
-<img src="https://ibb.co/Chy8N4F" style=" width:60px ; height:60px "  >
+https://ibb.co/Chy8N4F
 
 
 https://ibb.co/VJ5tNF6
